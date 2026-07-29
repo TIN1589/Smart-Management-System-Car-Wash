@@ -1,0 +1,152 @@
+package com.autowash.autowash_pro.service;
+
+import com.autowash.autowash_pro.entity.Reward;
+import com.autowash.autowash_pro.entity.SystemConfig;
+import com.autowash.autowash_pro.entity.TierRule;
+import com.autowash.autowash_pro.repository.RewardRepository;
+import com.autowash.autowash_pro.repository.SystemConfigRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class AdminConfigService {
+
+    private final SystemConfigRepository systemConfigRepository;
+    private final RewardRepository rewardRepository;
+
+    public SystemConfig getSystemConfig() {
+        List<SystemConfig> configs = systemConfigRepository.findAll();
+        if (configs.isEmpty()) {
+            return initializeDefaultConfig();
+        }
+        return configs.get(0);
+    }
+
+    public SystemConfig updateSystemConfig(SystemConfig newConfig) {
+        List<SystemConfig> configs = systemConfigRepository.findAll();
+        SystemConfig existing;
+        if (configs.isEmpty()) {
+            existing = new SystemConfig();
+        } else {
+            existing = configs.get(0);
+        }
+
+        existing.setPointRate(newConfig.getPointRate());
+        
+        // Update tier rules
+        if (existing.getTierRules() == null) {
+            existing.setTierRules(new ArrayList<>());
+        } else {
+            existing.getTierRules().clear();
+        }
+
+        if (newConfig.getTierRules() != null) {
+            for (TierRule rule : newConfig.getTierRules()) {
+                // Ensure proper label and className if not provided
+                if (rule.getLabel() == null) {
+                    rule.setLabel(rule.getTier().toUpperCase());
+                }
+                if (rule.getClassName() == null) {
+                    rule.setClassName("bg-tier-" + rule.getTier().toLowerCase());
+                }
+                existing.getTierRules().add(rule);
+            }
+        }
+
+        return systemConfigRepository.save(existing);
+    }
+
+    public List<Reward> getRewards() {
+        List<Reward> rewards = rewardRepository.findAll();
+        if (rewards.isEmpty()) {
+            return initializeDefaultRewards();
+        }
+        return rewards;
+    }
+
+    public Reward addReward(Reward reward) {
+        if (reward.getTierClassName() == null && reward.getMinimumTier() != null) {
+            reward.setTierClassName("bg-tier-" + reward.getMinimumTier().toLowerCase());
+        }
+        return rewardRepository.save(reward);
+    }
+
+    public void deleteReward(Long id) {
+        rewardRepository.deleteById(id);
+    }
+
+    private SystemConfig initializeDefaultConfig() {
+        List<TierRule> rules = new ArrayList<>();
+        rules.add(TierRule.builder()
+                .tier("member")
+                .label("MEMBER")
+                .name("Cấu hình mặc định")
+                .threshold(0)
+                .bookingWindow(3)
+                .multiplier(100)
+                .perks("Thành viên mới đăng ký. Tích điểm cơ bản cho mỗi dịch vụ.")
+                .className("bg-tier-member")
+                .build());
+        rules.add(TierRule.builder()
+                .tier("silver")
+                .label("SILVER")
+                .name("Hạng Bạc")
+                .threshold(5)
+                .bookingWindow(7)
+                .multiplier(110)
+                .perks("Giảm giá 5% cho các dịch vụ rửa xe cao cấp. Ưu tiên đặt lịch trước 7 ngày.")
+                .className("bg-tier-silver")
+                .build());
+        rules.add(TierRule.builder()
+                .tier("gold")
+                .label("GOLD")
+                .name("Hạng Vàng")
+                .threshold(15)
+                .bookingWindow(14)
+                .multiplier(125)
+                .perks("Miễn phí dịch vụ hút bụi. Giảm giá 10% các gói Detail. Ưu tiên hàng chờ cao.")
+                .className("bg-tier-gold" )
+                .build());
+        rules.add(TierRule.builder()
+                .tier("platinum")
+                .label("PLATINUM")
+                .name("Hạng Bạch Kim")
+                .threshold(30)
+                .bookingWindow(30)
+                .multiplier(150)
+                .perks("Chăm sóc đặc biệt. Miễn phí nâng cấp gói rửa. Quà tặng sinh nhật trị giá 500k.")
+                .className("bg-tier-platinum")
+                .build());
+
+        SystemConfig config = SystemConfig.builder()
+                .pointRate("10.000")
+                .tierRules(rules)
+                .build();
+
+        return systemConfigRepository.save(config);
+    }
+
+    private List<Reward> initializeDefaultRewards() {
+        List<Reward> defaultRewards = new ArrayList<>();
+        defaultRewards.add(Reward.builder()
+                .name("Voucher Rửa xe 0đ")
+                .points("500")
+                .minimumTier("SILVER")
+                .tierClassName("bg-tier-silver")
+                .build());
+        defaultRewards.add(Reward.builder()
+                .name("Nước hoa xe hơi cao cấp")
+                .points("1.200")
+                .minimumTier("GOLD")
+                .tierClassName("bg-tier-gold")
+                .build());
+        
+        return rewardRepository.saveAll(defaultRewards);
+    }
+}

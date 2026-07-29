@@ -1,0 +1,1090 @@
+{
+	"info": {
+		"_postman_id": "7b0d7710-1a74-4b53-bcf7-a70e9a117b4c",
+		"name": "Autowash Pro API Collection",
+		"description": "Collection của Autowash Pro chứa đầy đủ các endpoints cho Auth, Customers, Vehicles, Bookings, Loyalty, Promotions, Articles, và Dashboard.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Auth",
+			"item": [
+				{
+					"name": "Register (Đăng ký)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Nguyễn Văn A\",\n  \"phone\": \"0987654321\",\n  \"email\": \"nguyenvana@gmail.com\",\n  \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login (Đăng nhập)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.accessToken) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"0987654321\",\n  \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"your_refresh_token_here\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Customer Admin (Tại quầy)",
+			"item": [
+				{
+					"name": "Get All Customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers?keyword=&tierStr=ALL",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "tierStr",
+									"value": "ALL"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Customer at Counter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Trần Thị B\",\n  \"phone\": \"0912345678\",\n  \"email\": \"tranthib@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers/{{customerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers",
+								"{{customerId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Customer Info",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Trần Thị B (Updated)\",\n  \"phone\": \"0912345678\",\n  \"email\": \"tranthib_new@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers/{{customerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers",
+								"{{customerId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate Customer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers/{{customerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers",
+								"{{customerId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer Vehicles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers/{{customerId}}/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers",
+								"{{customerId}}",
+								"vehicles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer Booking History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/customers/{{customerId}}/history",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"customers",
+								"{{customerId}}",
+								"history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Vehicles (Yêu cầu Token)",
+			"item": [
+				{
+					"name": "Get My Vehicles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vehicles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Vehicle",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"licensePlate\": \"30A-99999\",\n  \"vehicleType\": \"CAR\",\n  \"brand\": \"Honda Civic\",\n  \"color\": \"Trắng\",\n  \"primary\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vehicles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Vehicle",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"licensePlate\": \"30A-99999\",\n  \"vehicleType\": \"CAR\",\n  \"brand\": \"Honda Civic Type R\",\n  \"color\": \"Đỏ\",\n  \"primary\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vehicles",
+								"{{vehicleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Primary Vehicle",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}/primary",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vehicles",
+								"{{vehicleId}}",
+								"primary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Vehicle",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vehicles/{{vehicleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vehicles",
+								"{{vehicleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Bookings (Yêu cầu Token)",
+			"item": [
+				{
+					"name": "Create Booking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vehicleId\": \"{{vehicleId}}\",\n  \"scheduledAt\": \"2026-06-25T10:00:00\",\n  \"serviceType\": \"PREMIUM\",\n  \"notes\": \"Rửa kỹ phần gầm xe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{bookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Availability Slots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/availability?date=2026-06-25",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"availability"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2026-06-25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Booking",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{bookingId}}",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Get Bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/bookings?status=PENDING&date=2026-06-25",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"bookings"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PENDING"
+								},
+								{
+									"key": "date",
+									"value": "2026-06-25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Update Booking Status",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"CONFIRMED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/bookings/{{bookingId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"bookings",
+								"{{bookingId}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Loyalty (Yêu cầu Token)",
+			"item": [
+				{
+					"name": "Earn Points",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"amountPaid\": 50000,\n  \"washId\": \"{{bookingId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/loyalty/earn",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loyalty",
+								"earn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Redeem Points",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"redeemType\": \"WASH_DISCOUNT\",\n  \"referenceId\": \"{{bookingId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/loyalty/redeem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loyalty",
+								"redeem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Point Balance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/loyalty/balance/{{customerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loyalty",
+								"balance",
+								"{{customerId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trigger Tier Review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/loyalty/tier-review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loyalty",
+								"tier-review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer Point History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/customers/{{customerId}}/points?page=0&size=10&sort=createdAt,desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"customers",
+								"{{customerId}}",
+								"points"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "createdAt,desc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Admin Loyalty Config (Yêu cầu Token Admin)",
+			"item": [
+				{
+					"name": "Get Tier Config",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/tier-config",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"tier-config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tier Config",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vndPerPoint\": 10000,\n  \"multiplierMember\": 1.0,\n  \"multiplierSilver\": 1.05,\n  \"multiplierGold\": 1.10,\n  \"multiplierPlatinum\": 1.15,\n  \"pointExpiryMonths\": 12,\n  \"redeemPointsWashDiscount\": 50,\n  \"redeemPointsGift\": 100,\n  \"redeemPointsVoucher\": 150\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/tier-config",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"tier-config"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Admin Promotions (Yêu cầu Token)",
+			"item": [
+				{
+					"name": "Get Admin Promotions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/promotions?status=ALL&search=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"promotions"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ALL"
+								},
+								{
+									"key": "search",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Promotion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Khuyến mãi hè sôi động\",\n  \"promoType\": \"PERCENTAGE\",\n  \"value\": 10,\n  \"usageLimit\": 100,\n  \"targetTiers\": \"SILVER,GOLD,PLATINUM\",\n  \"startsAt\": \"2026-06-22T00:00:00\",\n  \"endsAt\": \"2026-08-31T23:59:59\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/promotions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"promotions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle Promotion Status",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/promotions/{{promoId}}/toggle",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"promotions",
+								"{{promoId}}",
+								"toggle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Promotion Notification",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/promotions/{{promoId}}/send",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"promotions",
+								"{{promoId}}",
+								"send"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Admin Articles (Yêu cầu Token)",
+			"item": [
+				{
+					"name": "Get Admin Articles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/articles?status=ALL&search=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"articles"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ALL"
+								},
+								{
+									"key": "search",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Article",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Hướng dẫn chăm sóc gầm xe mùa mưa\",\n  \"summary\": \"Tầm quan trọng của việc xịt gầm bảo vệ xe\",\n  \"content\": \"<p>Nội dung HTML mô tả chi tiết quy trình bảo dưỡng...</p>\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"category\": \"KNOWLEDGE\",\n  \"status\": \"DRAFT\",\n  \"author\": \"Admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/articles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle Article Status",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/articles/{{articleId}}/toggle",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"articles",
+								"{{articleId}}",
+								"toggle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Article Details",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Hướng dẫn chăm sóc gầm xe mùa mưa (Mới)\",\n  \"summary\": \"Tầm quan trọng của việc xịt gầm bảo vệ xe\",\n  \"content\": \"<p>Nội dung mới cập nhật...</p>\",\n  \"coverImage\": \"https://example.com/cover_new.jpg\",\n  \"category\": \"KNOWLEDGE\",\n  \"status\": \"PUBLISHED\",\n  \"author\": \"Admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/articles/{{articleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"articles",
+								"{{articleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Article",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/articles/{{articleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"articles",
+								"{{articleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "9. Dashboard Stats (Yêu cầu Token)",
+			"item": [
+				{
+					"name": "Get Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/dashboard/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"dashboard",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_access_token_here",
+			"type": "string"
+		},
+		{
+			"key": "customerId",
+			"value": "replace-with-customer-uuid",
+			"type": "string"
+		},
+		{
+			"key": "vehicleId",
+			"value": "replace-with-vehicle-uuid",
+			"type": "string"
+		},
+		{
+			"key": "bookingId",
+			"value": "replace-with-booking-uuid",
+			"type": "string"
+		},
+		{
+			"key": "promoId",
+			"value": "replace-with-promotion-uuid",
+			"type": "string"
+		},
+		{
+			"key": "articleId",
+			"value": "replace-with-article-uuid",
+			"type": "string"
+		}
+	]
+}
