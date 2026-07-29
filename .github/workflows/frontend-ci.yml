@@ -42,7 +42,7 @@ jobs:
       run: npm run typecheck
       
     - name: Run Lint
-      run: npm run lint
+      run: npm run lint -- --format json
       
     - name: Build Project
       run: npm run build
