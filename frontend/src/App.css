@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #f8f9ff;
+  --foreground: #191c20;
+  --card: #ffffff;
+  --card-foreground: #191c20;
+  --popover: #ffffff;
+  --popover-foreground: #191c20;
+  --primary: #185fa5;
+  --primary-foreground: #ffffff;
+  --secondary: #e1e3e4;
+  --secondary-foreground: #191c1d;
+  --muted: #f2f3fa;
+  --muted-foreground: #424751;
+  --accent: #f2f3fa;
+  --accent-foreground: #191c20;
+  --destructive: #e24b4a;
+  --border: #e5e7eb;
+  --input: #c2c6d2;
+  --ring: #185fa5;
+  --surface: #ffffff;
+  --surface-container: #ededf4;
+  --surface-container-low: #f2f3fa;
+  --on-background: #191c20;
+  --on-surface: #191c20;
+  --on-surface-variant: #424751;
+  --outline: #727782;
+  --outline-variant: #c2c6d2;
+  --warning: #ba7517;
+  --success: #3b6d11;
+  --danger: #e24b4a;
+  --error: #ba1a1a;
+  --info: #185fa5;
+  --tertiary: #6f3800;
+  --tier-member: #d3d1c7;
+  --tier-silver: #b5d4f4;
+  --tier-gold: #fac775;
+  --tier-platinum: #cecbf6;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-on-background: var(--on-background);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-error: var(--error);
+  --color-info: var(--info);
+  --color-tertiary: var(--tertiary);
+  --color-tier-member: var(--tier-member);
+  --color-tier-silver: var(--tier-silver);
+  --color-tier-gold: var(--tier-gold);
+  --color-tier-platinum: var(--tier-platinum);
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply scroll-smooth font-sans;
+    font-size: 17px;
+  }
+
+  body {
+    @apply m-0 min-h-screen min-w-80 bg-background text-foreground;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 999px;
+    opacity: 0.3;
+  }
+}
