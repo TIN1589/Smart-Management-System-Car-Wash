@@ -4,7 +4,8 @@ import com.autowash.autowash_pro.enums.Tier;
 import lombok.*;
 import java.util.UUID;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,4 +20,3 @@ public class AuthResponse {
     private String fullName;
     private String phone;
 }
-

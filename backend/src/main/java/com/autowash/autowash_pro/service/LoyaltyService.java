@@ -6,7 +6,7 @@ import com.autowash.autowash_pro.dto.response.loyalty.*;
 import com.autowash.autowash_pro.entity.Customer;
 import com.autowash.autowash_pro.entity.CustomerPoints;
 import com.autowash.autowash_pro.enums.PointType;
-import com.autowash.autowash_pro.enums.RedeemType;
+
 import com.autowash.autowash_pro.enums.Tier;
 import com.autowash.autowash_pro.exception.BusinessException;
 import com.autowash.autowash_pro.exception.ResourceNotFoundException;
@@ -55,7 +55,8 @@ public class LoyaltyService {
         if (request.getCustomPoints() != null && request.getCustomPoints() > 0) {
             points = request.getCustomPoints();
         } else {
-            // Tính điểm: (amountPaid / vndPerPoint) × tierMultiplier từ SystemConfig / TierRule
+            // Tính điểm: (amountPaid / vndPerPoint) × tierMultiplier từ SystemConfig /
+            // TierRule
             double multiplier = getTierRuleMultiplier(systemConfig, customer.getTier());
             points = (int) (request.getAmountPaid()
                     .divide(vndPerPoint, 4, RoundingMode.FLOOR)

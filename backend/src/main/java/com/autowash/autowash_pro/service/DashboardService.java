@@ -3,7 +3,7 @@ package com.autowash.autowash_pro.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +37,8 @@ public class DashboardService {
 
             // Bốc toàn bộ danh sách lịch hẹn hôm nay từ DB
             List<Booking> todayBookings = bookingRepository.findByScheduledAtBetween(startOfToday, endOfToday);
-            if (todayBookings == null) todayBookings = new ArrayList<>();
+            if (todayBookings == null)
+                todayBookings = new ArrayList<>();
 
             // 1. Tính toán tổng doanh thu hôm nay theo biểu giá thực tế (30k - 50k - 80k)
             BigDecimal todayRevenue = todayBookings.stream()
@@ -66,21 +67,26 @@ public class DashboardService {
             // 2. Phân loại số lượng xe máy và ô tô
             long motorbikeCount = todayBookings.stream()
                     .filter(b -> {
-                        if (b == null) return false;
+                        if (b == null)
+                            return false;
                         try {
                             if (b.getVehicle() != null && b.getVehicle().getVehicleType() != null) {
                                 return b.getVehicle().getVehicleType().toString().toUpperCase().contains("MOTORBIKE");
                             }
-                        } catch (Exception e) {}
-                        return b.getServiceType() != null && b.getServiceType().toString().toUpperCase().contains("MOTORBIKE");
+                        } catch (Exception e) {
+                        }
+                        return b.getServiceType() != null
+                                && b.getServiceType().toString().toUpperCase().contains("MOTORBIKE");
                     })
                     .count();
             long carCount = totalWashCount - motorbikeCount;
 
-            // 3. ĐỒNG BỘ CRM: Đếm tổng số lượng khách hàng thực tế đang có trong hệ thống dữ liệu
+            // 3. ĐỒNG BỘ CRM: Đếm tổng số lượng khách hàng thực tế đang có trong hệ thống
+            // dữ liệu
             long newCustomerCount = customerRepository.count();
 
-            // 4. ĐỒNG BỘ LOYALTY ENGINE: Tính điểm phát ra động dựa trên cấu hình Tier Multiplier của tài liệu hệ thống
+            // 4. ĐỒNG BỘ LOYALTY ENGINE: Tính điểm phát ra động dựa trên cấu hình Tier
+            // Multiplier của tài liệu hệ thống
             long issuedPoints = todayBookings.stream()
                     .filter(b -> b != null && b.getStatus() != null)
                     .filter(b -> {
@@ -90,24 +96,28 @@ public class DashboardService {
                     .mapToLong(b -> {
                         // Bốc giá tiền thực tế của đơn hàng
                         String svc = b.getServiceType() != null ? b.getServiceType().toString().toUpperCase() : "";
-                        double baseAmount = svc.contains("FULL") || svc.contains("DETAIL") ? 80000.0 : (svc.contains("PREMIUM") ? 50000.0 : 30000.0);
-                        
+                        double baseAmount = svc.contains("FULL") || svc.contains("DETAIL") ? 80000.0
+                                : (svc.contains("PREMIUM") ? 50000.0 : 30000.0);
+
                         // Công thức hệ thống: Cứ 10.000 VND = 1 điểm cơ bản
                         double basePoints = baseAmount / 10000.0;
-                        
+
                         // Áp dụng tỷ lệ nhân thưởng (Tier Multiplier) theo phân cấp tài liệu thiết kế
                         double multiplier = 1.0;
                         try {
                             if (b.getCustomer() != null && b.getCustomer().getTier() != null) {
                                 String tierStr = b.getCustomer().getTier().toString().toUpperCase();
-                                if (tierStr.contains("SILVER")) multiplier = 1.05;
-                                else if (tierStr.contains("GOLD")) multiplier = 1.10;
-                                else if (tierStr.contains("PLATINUM")) multiplier = 1.15;
+                                if (tierStr.contains("SILVER"))
+                                    multiplier = 1.05;
+                                else if (tierStr.contains("GOLD"))
+                                    multiplier = 1.10;
+                                else if (tierStr.contains("PLATINUM"))
+                                    multiplier = 1.15;
                             }
                         } catch (Exception e) {
                             // Bọc lót nếu đơn POS chưa liên kết thực thể Customer sâu
                         }
-                        
+
                         return (long) Math.ceil(basePoints * multiplier);
                     })
                     .sum();
@@ -132,10 +142,15 @@ public class DashboardService {
                                     if (b.getTotalAmount() != null) {
                                         return b.getTotalAmount();
                                     }
-                                    String svc = b.getServiceType() != null ? b.getServiceType().toString().toUpperCase() : "";
-                                    if (svc.contains("FULL") || svc.contains("DETAIL")) return BigDecimal.valueOf(80000L);
-                                    else if (svc.contains("PREMIUM")) return BigDecimal.valueOf(50000L);
-                                    else return BigDecimal.valueOf(30000L);
+                                    String svc = b.getServiceType() != null
+                                            ? b.getServiceType().toString().toUpperCase()
+                                            : "";
+                                    if (svc.contains("FULL") || svc.contains("DETAIL"))
+                                        return BigDecimal.valueOf(80000L);
+                                    else if (svc.contains("PREMIUM"))
+                                        return BigDecimal.valueOf(50000L);
+                                    else
+                                        return BigDecimal.valueOf(30000L);
                                 })
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                     }
@@ -147,55 +162,65 @@ public class DashboardService {
 
             // 6. Đồng bộ danh sách hàng chờ hôm nay mượt mà sang DTO mới
             todayQueue = todayBookings.stream()
-                .filter(Objects::nonNull)
-                .map(b -> {
-                    String timeStr = "00:00";
-                    if (b.getScheduledAt() != null) {
-                        String rawTime = b.getScheduledAt().toLocalTime().toString();
-                        timeStr = rawTime.length() >= 5 ? rawTime.substring(0, 5) : rawTime;
-                    }
-                    String plate = "N/A";
-                    try {
-                        if (b.getVehicle() != null && b.getVehicle().getLicensePlate() != null) {
-                            plate = b.getVehicle().getLicensePlate();
+                    .filter(Objects::nonNull)
+                    .map(b -> {
+                        String timeStr = "00:00";
+                        if (b.getScheduledAt() != null) {
+                            String rawTime = b.getScheduledAt().toLocalTime().toString();
+                            timeStr = rawTime.length() >= 5 ? rawTime.substring(0, 5) : rawTime;
                         }
-                    } catch (Exception e) {
-                        plate = "XE_MÁY";
-                    }
-                    String serviceType = b.getServiceType() != null ? b.getServiceType().toString().toUpperCase() : "BASIC";
-                    String status = b.getStatus() != null ? b.getStatus().toString().toUpperCase() : "PENDING";
-                    
-                    return new QueueDataDTO(timeStr, plate, serviceType, status);
-                }).collect(Collectors.toList());
+                        String plate = "N/A";
+                        try {
+                            if (b.getVehicle() != null && b.getVehicle().getLicensePlate() != null) {
+                                plate = b.getVehicle().getLicensePlate();
+                            }
+                        } catch (Exception e) {
+                            plate = "XE_MÁY";
+                        }
+                        String serviceType = b.getServiceType() != null ? b.getServiceType().toString().toUpperCase()
+                                : "BASIC";
+                        String status = b.getStatus() != null ? b.getStatus().toString().toUpperCase() : "PENDING";
 
-            // 7. Thống kê phân cấp số lượng khách hàng thực tế theo từng Tier trong DB để vẽ đồ thị Donut
-            long memberCount = customerRepository.findAll().stream().filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("MEMBER")).count();
-            long silverCount = customerRepository.findAll().stream().filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("SILVER")).count();
-            long goldCount = customerRepository.findAll().stream().filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("GOLD")).count();
-            long platinumCount = customerRepository.findAll().stream().filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("PLATINUM")).count();
+                        return new QueueDataDTO(timeStr, plate, serviceType, status);
+                    }).collect(Collectors.toList());
+
+            // 7. Thống kê phân cấp số lượng khách hàng thực tế theo từng Tier trong DB để
+            // vẽ đồ thị Donut
+            long memberCount = customerRepository.findAll().stream()
+                    .filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("MEMBER"))
+                    .count();
+            long silverCount = customerRepository.findAll().stream()
+                    .filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("SILVER"))
+                    .count();
+            long goldCount = customerRepository.findAll().stream()
+                    .filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("GOLD")).count();
+            long platinumCount = customerRepository.findAll().stream()
+                    .filter(c -> c.getTier() != null && c.getTier().toString().toUpperCase().contains("PLATINUM"))
+                    .count();
 
             return DashboardStatsDTO.builder()
-                .todayRevenue(todayRevenue)
-                .totalWashCount(totalWashCount)
-                .motorbikeCount(motorbikeCount)
-                .carCount(carCount)
-                .newCustomerCount(newCustomerCount)
-                .issuedPoints(issuedPoints)
-                .revenue7Days(revenue7Days)
-                .todayQueue(todayQueue)
-                // Đổ data phân hạng hội viên thật để kích hoạt vòng tròn màu sắc động ở Frontend
-                .memberCount(memberCount == 0 ? 5L : memberCount) 
-                .silverCount(silverCount == 0 ? 2L : silverCount)
-                .goldCount(goldCount == 0 ? 1L : goldCount)
-                .platinumCount(platinumCount == 0 ? 1L : platinumCount)
-                .build();
+                    .todayRevenue(todayRevenue)
+                    .totalWashCount(totalWashCount)
+                    .motorbikeCount(motorbikeCount)
+                    .carCount(carCount)
+                    .newCustomerCount(newCustomerCount)
+                    .issuedPoints(issuedPoints)
+                    .revenue7Days(revenue7Days)
+                    .todayQueue(todayQueue)
+                    // Đổ data phân hạng hội viên thật để kích hoạt vòng tròn màu sắc động ở
+                    // Frontend
+                    .memberCount(memberCount == 0 ? 5L : memberCount)
+                    .silverCount(silverCount == 0 ? 2L : silverCount)
+                    .goldCount(goldCount == 0 ? 1L : goldCount)
+                    .platinumCount(platinumCount == 0 ? 1L : platinumCount)
+                    .build();
 
         } catch (Exception e) {
             System.err.println("Lỗi bốc tách dữ liệu Dashboard: " + e.getMessage());
             return DashboardStatsDTO.builder()
-                .todayRevenue(BigDecimal.ZERO).totalWashCount(0L).motorbikeCount(0L).carCount(0L)
-                .newCustomerCount(0L).issuedPoints(0L).revenue7Days(revenue7Days).todayQueue(todayQueue)
-                .build();
+                    .todayRevenue(BigDecimal.ZERO).totalWashCount(0L).motorbikeCount(0L).carCount(0L)
+                    .newCustomerCount(0L).issuedPoints(0L).revenue7Days(revenue7Days).todayQueue(todayQueue)
+                    .build();
         }
     }
 }

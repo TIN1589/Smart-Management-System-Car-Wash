@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -80,7 +80,8 @@ public class CustomerControllerTest {
     public void testUpdateCustomer_Success() throws Exception {
         UUID customerId = UUID.randomUUID();
         String updatedCustomerJson = "{\"name\":\"Nguyen Van A Updated\",\"phone\":\"0987654321\",\"email\":\"nva_updated@gmail.com\"}";
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/admin/customers/" + customerId)
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .put("/api/admin/customers/" + customerId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedCustomerJson))
                 .andExpect(status().isOk());
@@ -90,7 +91,8 @@ public class CustomerControllerTest {
     @Test
     public void testDisableCustomer_Success() throws Exception {
         UUID customerId = UUID.randomUUID();
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/admin/customers/" + customerId)
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .delete("/api/admin/customers/" + customerId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
