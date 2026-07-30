@@ -12,7 +12,7 @@
 Dự án được chia thành 2 phần chính với kiến trúc độc lập (Tách biệt Backend và Frontend):
 
 ### 1. 🖥️ Backend
-- **Công nghệ chính:** Java 21, Spring Boot 3.3.x, PostgreSQL, Redis, WebSocket, Flyway.
+- **Công nghệ chính:** Java 21, Spring Boot 4.1.0, PostgreSQL, Redis, WebSocket, Flyway.
 - **Vai trò:** Xử lý nghiệp vụ lõi (đặt lịch, tích điểm, phân quyền), cung cấp RESTful APIs và Realtime data qua STOMP.
 - 🔗 **[Xem chi tiết hướng dẫn cài đặt & tài liệu Backend](./backend/README.md)**
 

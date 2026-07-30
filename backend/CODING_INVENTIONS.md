@@ -8,7 +8,7 @@
 
 | Thành phần | Công nghệ                   |
 | ---------- | --------------------------- |
-| Backend    | Java 21 + Spring Boot 3.3.5 |
+| Backend    | Java 21 + Spring Boot 4.1.0 |
 | Database   | PostgreSQL (Supabase)       |
 | Cache      | Redis                       |
 | Migration  | Flyway                      |

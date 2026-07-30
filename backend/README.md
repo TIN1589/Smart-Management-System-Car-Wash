@@ -53,7 +53,7 @@ Dưới đây là bảng so sánh nhanh giữa **Yêu cầu ban đầu** và **K
 ## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
 
 ### 🖥️ Backend (autowash-pro)
-* **Runtime & Framework:** Java 21 + Spring Boot 3.3.x.
+* **Runtime & Framework:** Java 21 + Spring Boot 4.1.0.
 * **Database:** PostgreSQL (Host trên đám mây Supabase Cloud).
 * **Database Migration:** Flyway (Tự động chạy script cập nhật schema).
 * **Security:** Spring Security + JWT.
