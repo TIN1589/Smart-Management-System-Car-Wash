@@ -1,4 +1,4 @@
-# 🚗 AutoWash Pro - Smart Management System Car Wash
+# AutoWash Pro - Smart Management System Car Wash
 
 [![Backend CI](https://github.com/TIN1589/Smart-Management-System-Car-Wash/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/TIN1589/Smart-Management-System-Car-Wash/actions/workflows/backend-ci.yml)
 [![Frontend CI](https://github.com/TIN1589/Smart-Management-System-Car-Wash/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/TIN1589/Smart-Management-System-Car-Wash/actions/workflows/frontend-ci.yml)
@@ -7,7 +7,7 @@
 
 ---
 
-## 🏗️ Kiến Trúc Hệ Thống (Architecture)
+## Kiến Trúc Hệ Thống (Architecture)
 
 Dự án được chia thành 2 phần chính với kiến trúc độc lập (Tách biệt Backend và Frontend):
 
@@ -16,14 +16,14 @@ Dự án được chia thành 2 phần chính với kiến trúc độc lập (T
 - **Vai trò:** Xử lý nghiệp vụ lõi (đặt lịch, tích điểm, phân quyền), cung cấp RESTful APIs và Realtime data qua STOMP.
 - 🔗 **[Xem chi tiết hướng dẫn cài đặt & tài liệu Backend](./backend/README.md)**
 
-### 2. 🎨 Frontend
+### 2. Frontend
 - **Công nghệ chính:** React 19, TypeScript, Vite, Tailwind CSS v4, Redux Toolkit, Framer Motion.
 - **Vai trò:** Giao diện Client Dashboard cho khách hàng (đặt lịch, xem điểm) và Admin Dashboard (cấu hình, quản lý dịch vụ).
 - 🔗 **[Xem chi tiết hướng dẫn cài đặt & tài liệu Frontend](./frontend/README.md)**
 
 ---
 
-## 🚀 Tính Năng Nổi Bật
+## Tính Năng Nổi Bật
 
 - **Tích điểm & Thăng hạng tự động:** Cấu hình động tỷ lệ tích điểm, hoàn điểm tự động khi hủy lịch, tự động lên/xuống hạng dựa trên lượt rửa.
 - **Quản lý Đặt lịch (Booking):** Giới hạn ngày đặt trước theo Rank thành viên, tự động tính điểm ưu tiên xếp hàng.
