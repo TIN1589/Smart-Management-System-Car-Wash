@@ -7,7 +7,7 @@
 
 ---
 
-## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
+## Công Nghệ Sử Dụng (Tech Stack)
 
 - **Runtime & Bundler:** React 19 + TypeScript + Vite.
 - **Styling & Components:** Tailwind CSS v4 + shadcn-compatible components + lucide-react icons.
