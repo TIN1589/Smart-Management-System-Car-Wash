@@ -59,6 +59,10 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         String identifier = request.getEmailOrPhone().trim();
 
+if (identifier.contains("@")) {
+    identifier = identifier.toLowerCase(java.util.Locale.ROOT);
+}
+
         Customer customer = findCustomerByEmailOrPhone(identifier)
                 .orElseThrow(() -> new BusinessException("Email hoặc số điện thoại hoặc mật khẩu không đúng"));
 
