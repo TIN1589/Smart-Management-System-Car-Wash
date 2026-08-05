@@ -70,6 +70,10 @@ export function AuthPage({ mode }: AuthPageProps) {
         setLocalError('Vui lòng nhập mật khẩu.')
         return
       }
+if (password.length < 6) {
+  setLocalError('Mật khẩu phải có ít nhất 6 ký tự.')
+  return
+}
 
       dispatch(authStart())
       try {
