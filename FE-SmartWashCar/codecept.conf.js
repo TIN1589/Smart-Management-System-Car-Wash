@@ -5,7 +5,7 @@ export const config = {
   helpers: {
     Playwright: {
       browser: 'chromium',
-      url: 'http://localhost:3000',
+      url: 'http://localhost:5173',
       show: true
     }
   },
