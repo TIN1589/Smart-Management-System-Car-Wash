@@ -91,26 +91,33 @@ public class CustomerService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng với ID: " + id));
     }
 
-    // 2. Logic cập nhật thông tin khách hàng
-    @Transactional
-    public Customer updateCustomer(UUID id, CustomerRequestDTO dto) {
-        Customer customer = getCustomerById(id);
+// 2. Logic cập nhật thông tin khách hàng (Đã fix validation)
+@Transactional
+public Customer updateCustomer(UUID id, CustomerRequestDTO dto) {
+    Customer customer = getCustomerById(id);
 
-        if (dto.getFullName() != null && !dto.getFullName().isBlank()) {
-            customer.setFullName(dto.getFullName());
+    // Validate email đúng định dạng
+    if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+        if (!dto.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new BusinessException("Email không đúng định dạng!");
         }
-
-        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
-            customer.setPhone(dto.getPhone());
+        // Kiểm tra email trùng lặp với người khác
+        if (!dto.getEmail().equals(customer.getEmail()) && customerRepository.existsByEmail(dto.getEmail())) {
+            throw new BusinessException("Email này đã được sử dụng bởi tài khoản khác!");
         }
-
-        if (dto.getEmail() != null) {
-            customer.setEmail(dto.getEmail());
-        }
-
-        return customerRepository.save(customer);
+        customer.setEmail(dto.getEmail());
     }
 
+    if (dto.getFullName() != null && !dto.getFullName().isBlank()) {
+        customer.setFullName(dto.getFullName());
+    }
+
+    if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+        customer.setPhone(dto.getPhone());
+    }
+
+    return customerRepository.save(customer);
+}
     // 3. Logic thay đổi trạng thái linh hoạt (Đóng/Mở khóa) không phụ thuộc DTO
     @Transactional
     public void toggleCustomerStatus(UUID id, boolean status) {
