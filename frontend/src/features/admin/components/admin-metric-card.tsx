@@ -1,4 +1,4 @@
-import { TrendingUp } from 'lucide-react'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import type { AdminMetric } from '@/features/admin/data/admin-dashboard'
 import { Card, CardContent } from '@/shared/components/ui/card'
 import { cn } from '@/shared/lib/utils'
@@ -11,6 +11,9 @@ const toneClasses: Record<AdminMetric['tone'], string> = {
 }
 
 export function AdminMetricCard({ detail, icon: Icon, label, tone, trend, value }: AdminMetric) {
+  const isNegativeTrend = trend ? trend.trim().startsWith('-') || trend.toLowerCase().includes('giảm') || trend.includes('↓') : false
+  const TrendIcon = isNegativeTrend ? TrendingDown : TrendingUp
+
   return (
     <Card className="shadow-sm">
       <CardContent className="p-4">
@@ -19,8 +22,13 @@ export function AdminMetricCard({ detail, icon: Icon, label, tone, trend, value 
             <Icon aria-hidden="true" size={22} />
           </span>
           {trend && (
-            <span className="flex items-center gap-1 text-xs font-medium leading-4 text-success">
-              <TrendingUp size={14} />
+            <span
+              className={cn(
+                'flex items-center gap-1 text-xs font-medium leading-4',
+                isNegativeTrend ? 'text-error' : 'text-success'
+              )}
+            >
+              <TrendIcon size={14} />
               {trend}
             </span>
           )}

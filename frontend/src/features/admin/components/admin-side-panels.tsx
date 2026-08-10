@@ -1,4 +1,6 @@
 import { Clock, Sparkles } from 'lucide-react'
+import { Link } from '@/app/router'
+import { routes } from '@/app/routes'
 import { Button } from '@/shared/components/ui/button'
 import { Card, CardContent } from '@/shared/components/ui/card'
 import { cn } from '@/shared/lib/utils'
@@ -70,8 +72,8 @@ export function QueuePanel({ items }: { items: any[] }) {
           )}
         </div>
 
-        <Button className="mt-4 w-full text-slate-500 hover:text-slate-700 font-bold text-xs" type="button" variant="outline">
-          Xem tất cả booking
+        <Button asChild className="mt-4 w-full text-slate-500 hover:text-slate-700 font-bold text-xs" variant="outline">
+          <Link to={routes.adminBookings}>Xem tất cả booking</Link>
         </Button>
       </CardContent>
     </Card>
@@ -162,8 +164,8 @@ export function AdminActionCards() {
         <p className="mb-6 text-xs leading-relaxed text-white/80 font-medium">
           Ưu đãi 15% cho khách hàng Silver nâng cấp lên Platinum trong tuần này.
         </p>
-        <Button className="bg-white px-5 rounded-xl text-primary hover:bg-slate-50 text-xs font-bold shadow-md" type="button">
-          Gửi thông báo
+        <Button asChild className="bg-white px-5 rounded-xl text-primary hover:bg-slate-50 text-xs font-bold shadow-md">
+          <Link to={routes.adminPromotions}>Gửi thông báo</Link>
         </Button>
       </div>
       <Sparkles className="absolute -bottom-8 -right-8 text-white/10" size={120} />
