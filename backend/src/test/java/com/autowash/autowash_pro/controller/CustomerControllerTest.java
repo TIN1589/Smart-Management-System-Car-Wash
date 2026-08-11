@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.autowash.autowash_pro.entity.Customer;
 import com.autowash.autowash_pro.service.CustomerService;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +40,7 @@ public class CustomerControllerTest {
     // Test Case 1: GET All Customers
     @Test
     public void testGetAllCustomers_Success() throws Exception {
-        when(customerService.getAllCustomers()).thenReturn(new ArrayList<>());
+        when(customerService.getAdminCustomers(null, null)).thenReturn(new ArrayList<>());
         mockMvc.perform(get("/api/admin/customers")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -68,17 +69,29 @@ public class CustomerControllerTest {
     // Test Case 4: POST Create New Customer
     @Test
     public void testCreateCustomer_Success() throws Exception {
+        when(customerService.createCustomerAtCounter(Mockito.any())).thenReturn(Customer.builder()
+                .customerId(UUID.randomUUID())
+                .fullName("Nguyen Van A")
+                .phone("0987654321")
+                .email("nva@gmail.com")
+                .build());
         String customerJson = "{\"name\":\"Nguyen Van A\",\"phone\":\"0987654321\",\"email\":\"nva@gmail.com\"}";
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/admin/customers")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(customerJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     // Test Case 5: PUT Update Existing Customer
     @Test
     public void testUpdateCustomer_Success() throws Exception {
         UUID customerId = UUID.randomUUID();
+        when(customerService.updateCustomer(Mockito.eq(customerId), Mockito.any())).thenReturn(Customer.builder()
+                .customerId(customerId)
+                .fullName("Nguyen Van A Updated")
+                .phone("0987654321")
+                .email("nva_updated@gmail.com")
+                .build());
         String updatedCustomerJson = "{\"name\":\"Nguyen Van A Updated\",\"phone\":\"0987654321\",\"email\":\"nva_updated@gmail.com\"}";
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
                 .put("/api/admin/customers/" + customerId)

@@ -1,0 +1,19 @@
+# Maven / Java build output
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+
+# Node.js / Frontend dependencies & build
+**/node_modules/
+**/build/
+**/dist/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Environment & Database session
+*.env
+*.log

@@ -1,4 +1,4 @@
-# 🎨 AutoWash Pro Frontend
+# AutoWash Pro Frontend
 
 Ứng dụng giao diện khách hàng (Client Dashboard) và giao diện quản trị (Admin Dashboard) của dự án **AutoWash Pro**. Giao diện được thiết kế hiện đại, mượt mà, tối ưu hóa trải nghiệm đặt lịch, theo dõi điểm thưởng, xem cẩm nang chăm sóc xe và cấu hình hệ thống.
 
@@ -7,7 +7,7 @@
 
 ---
 
-## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
+## Công Nghệ Sử Dụng (Tech Stack)
 
 - **Runtime & Bundler:** React 19 + TypeScript + Vite.
 - **Styling & Components:** Tailwind CSS v4 + shadcn-compatible components + lucide-react icons.
@@ -17,7 +17,7 @@
 
 ---
 
-## 📁 Cấu Trúc Mã Nguồn Frontend
+## Cấu Trúc Mã Nguồn Frontend
 
 ```text
 src/
@@ -42,7 +42,7 @@ src/
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Chạy Giao Diện
+## Hướng Dẫn Cài Đặt & Chạy Giao Diện
 
 ### Yêu cầu hệ thống:
 - **Node.js** phiên bản v18 trở lên.
@@ -74,7 +74,7 @@ src/
 
 ---
 
-## 💡 Lưu Ý Khi Phát Triển
+## Lưu Ý Khi Phát Triển
 
 - Sử dụng đường dẫn `/test` để di chuyển nhanh chóng giữa các màn hình mà không cần phải thực hiện toàn bộ luồng đăng nhập/OTP.
 - Mọi API giao tiếp với Backend đều được bọc qua instance `authorizeAxios` trong `src/shared/lib/api-client.ts` để tự động đính kèm JWT token vào header yêu cầu.
