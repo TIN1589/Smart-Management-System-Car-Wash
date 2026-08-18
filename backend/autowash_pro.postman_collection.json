@@ -1049,6 +1049,368 @@
 				]
 			}
 		}
+		},
+		{
+			"name": "8. Admin Reports (SCRUM-27)",
+			"description": "Các request kiểm thử tính năng Thống kê Doanh thu — SCRUM-27.\nYêu cầu: adminToken trong Collection Variables.\nTC01–TC06: API cơ bản | TC12/TC13/TC16: Edge cases",
+			"item": [
+				{
+					"name": "TC01 - Revenue Report (Không filter — toàn bộ lịch sử)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC01: Status 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"TC01: totalRevenue tồn tại\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json).to.have.property('totalRevenue');",
+									"    pm.expect(json).to.have.property('totalWashes');",
+									"    pm.expect(json).to.have.property('chartData');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC02 - Revenue Report Filter startDate + endDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC02: Status 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"TC02: Có dữ liệu trong range\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.totalRevenue).to.be.a('number');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue?startDate=2026-01-01&endDate=2026-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"],
+							"query": [
+								{ "key": "startDate", "value": "2026-01-01" },
+								{ "key": "endDate",   "value": "2026-12-31" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC03 - Revenue Report Filter theo Tháng (granularity=month)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC03: Status 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"TC03: chartData được nhóm theo tháng\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.chartData).to.be.an('array');",
+									"    if (json.chartData.length > 0) {",
+									"        // Định dạng ngày phải là MM/yyyy",
+									"        pm.expect(json.chartData[0].date).to.match(/^\\d{2}\\/\\d{4}$/);",
+									"    }",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue?granularity=month&startDate=2026-01-01&endDate=2026-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"],
+							"query": [
+								{ "key": "granularity", "value": "month" },
+								{ "key": "startDate",   "value": "2026-01-01" },
+								{ "key": "endDate",     "value": "2026-12-31" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC04 - Revenue Report Filter theo Tuần (granularity=week)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC04: Status 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"TC04: serviceRevenueBreakdown tồn tại\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json).to.have.property('serviceRevenueBreakdown');",
+									"    pm.expect(json.serviceRevenueBreakdown).to.have.property('basicWashPercent');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue?granularity=week&startDate=2026-01-01&endDate=2026-03-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"],
+							"query": [
+								{ "key": "granularity", "value": "week" },
+								{ "key": "startDate",   "value": "2026-01-01" },
+								{ "key": "endDate",     "value": "2026-03-31" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC05 - Revenue Report bằng CUSTOMER token (expect 403)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC05: 403 Forbidden khi dùng customer token\", () => {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"// Hướng dẫn: đặt {{customerToken}} = access token của user thường (ROLE_CUSTOMER)"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC06 - Revenue Report không có token (expect 401)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC06: 401 Unauthorized khi không có token\", () => {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC12 - Revenue Report không có booking nào (expect 0)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC12: Status 200 (không lỗi)\", () => pm.response.to.have.status(200));",
+									"pm.test(\"TC12: totalRevenue = 0 hoặc rất nhỏ\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(Number(json.totalRevenue)).to.equal(0);",
+									"    pm.expect(Number(json.totalWashes)).to.equal(0);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue?startDate=2099-01-01&endDate=2099-01-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"],
+							"query": [
+								{ "key": "startDate", "value": "2099-01-01" },
+								{ "key": "endDate",   "value": "2099-01-31" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC13 - startDate sau endDate (expect 400 hoặc empty)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC13: 400 Bad Request khi startDate > endDate\", () => {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"TC13: Message lỗi rõ ràng\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.message).to.include('startDate');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue?startDate=2026-12-31&endDate=2026-01-01",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"],
+							"query": [
+								{ "key": "startDate", "value": "2026-12-31" },
+								{ "key": "endDate",   "value": "2026-01-01" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC16 - Ngày trong tương lai (expect revenue = 0)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"TC16: Status 200 (không lỗi)\", () => pm.response.to.have.status(200));",
+									"pm.test(\"TC16: Doanh thu tương lai = 0\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(Number(json.totalRevenue)).to.equal(0);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/revenue?startDate=2099-06-01&endDate=2099-06-30",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "revenue"],
+							"query": [
+								{ "key": "startDate", "value": "2099-06-01" },
+								{ "key": "endDate",   "value": "2099-06-30" }
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Report — Date Range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Customer Report: Status 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Customer Report: Có trường totalCustomers\", () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json).to.have.property('totalCustomers');",
+									"    pm.expect(json).to.have.property('tierDistribution');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/reports/customers?startDate=2026-01-01&endDate=2026-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "reports", "customers"],
+							"query": [
+								{ "key": "startDate", "value": "2026-01-01" },
+								{ "key": "endDate",   "value": "2026-12-31" }
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
 	],
 	"variable": [
 		{

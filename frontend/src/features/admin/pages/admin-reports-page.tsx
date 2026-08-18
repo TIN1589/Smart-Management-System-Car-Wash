@@ -10,7 +10,9 @@ import {
   Lightbulb,
   UserPlus,
   ChevronRight,
-  Loader2
+  Loader2,
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react'
 import { AdminSidebar } from '@/features/admin/components/admin-sidebar'
 import { AdminTopbar } from '@/features/admin/components/admin-topbar'
@@ -38,9 +40,12 @@ export function AdminReportsPage() {
 
   const [revenueReport, setRevenueReport] = useState<any>(null)
   const [customerReport, setCustomerReport] = useState<any>(null)
+  // TC20: Error state — hiển thị thông báo thân thiện khi API lỗi/timeout
+  const [apiError, setApiError] = useState<string | null>(null)
 
   const fetchReportsData = async () => {
     setLoading(true)
+    setApiError(null) // TC20: reset error mỗi lần fetch
     try {
       // 1. Fetch live top customers
       try {
@@ -116,16 +121,47 @@ export function AdminReportsPage() {
       } catch (err) {
         console.warn('Lỗi khi tải số liệu tổng quan Dashboard fallback:', err)
       }
-    } catch (error) {
+    } catch (error: any) {
+      // TC20: Hiển thị error message thân thiện thay vì crash
+      const isTimeout = error?.code === 'ECONNABORTED' || error?.message?.includes('timeout')
+      const isNetwork = error?.message?.includes('Network Error') || !navigator.onLine
+      setApiError(
+        isTimeout
+          ? 'Yêu cầu quá thời gian. Hệ thống có thể đang bận — vui lòng thử lại sau vài giây.'
+          : isNetwork
+          ? 'Không thể kết nối đến máy chủ. Kiểm tra kết nối mạng và thử lại.'
+          : 'Có lỗi xảy ra khi tải báo cáo. Vui lòng thử lại.'
+      )
       console.error('Lỗi tổng hợp báo cáo:', error)
     } finally {
       setLoading(false)
     }
-  }
+}
 
+  // TC18: useEffect dependency [granularity, startDate, endDate] — filter thay đổi tự động re-fetch
   useEffect(() => {
     fetchReportsData()
   }, [granularity, startDate, endDate])
+
+  // TC20: Error banner — hiển thị khi API lỗi/timeout
+  const ErrorBanner = () => (
+    <div className="mx-auto max-w-7xl mb-4">
+      <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-sm">
+        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-red-500" />
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-red-700">Không thể tải dữ liệu báo cáo</p>
+          <p className="mt-0.5 text-xs text-red-500">{apiError}</p>
+        </div>
+        <button
+          onClick={() => fetchReportsData()}
+          className="flex items-center gap-1.5 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-200 transition-colors"
+        >
+          <RefreshCw size={12} />
+          Thử lại
+        </button>
+      </div>
+    </div>
+  )
 
   if (loading) {
     return (
@@ -172,9 +208,13 @@ export function AdminReportsPage() {
       <AdminTopbar showSearch={false} actions={null} />
 
       <main className="min-h-screen px-6 pb-8 pt-24 lg:pl-[calc(16rem+24px)]">
+        {/* TC20: Error banner — hiển thị khi API lỗi/timeout, thân thiện với người dùng */}
+        {apiError && <ErrorBanner />}
+
         <div className="mx-auto max-w-7xl space-y-6">
           
           {/* Page Header */}
+
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl font-bold text-slate-800">
