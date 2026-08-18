@@ -70,6 +70,10 @@ export function AuthPage({ mode }: AuthPageProps) {
         setLocalError('Vui lòng nhập mật khẩu.')
         return
       }
+if (password.length < 6) {
+  setLocalError('Mật khẩu phải có ít nhất 6 ký tự.')
+  return
+}
 
       dispatch(authStart())
       try {
@@ -131,6 +135,10 @@ export function AuthPage({ mode }: AuthPageProps) {
         setLocalError('Vui lòng nhập họ tên.')
         return
       }
+if (name.trim().length < 2) {
+  setLocalError('Họ tên phải có ít nhất 2 ký tự.')
+  return
+}
       if (!email.trim()) {
         setLocalError('Vui lòng nhập email.')
         return
@@ -143,6 +151,10 @@ export function AuthPage({ mode }: AuthPageProps) {
         setLocalError('Vui lòng nhập mật khẩu.')
         return
       }
+if (password.length < 6) {
+  setLocalError('Mật khẩu phải có ít nhất 6 ký tự.')
+  return
+}
       if (password !== confirmPassword) {
         setLocalError('Xác nhận mật khẩu không khớp.')
         return
