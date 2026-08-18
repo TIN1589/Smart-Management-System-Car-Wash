@@ -4,6 +4,7 @@ import com.autowash.autowash_pro.entity.Customer;
 import com.autowash.autowash_pro.entity.WashHistory;
 import com.autowash.autowash_pro.enums.ServiceType;
 import com.autowash.autowash_pro.enums.Tier;
+import com.autowash.autowash_pro.exception.BusinessException;
 import com.autowash.autowash_pro.repository.CustomerRepository;
 import com.autowash.autowash_pro.repository.WashHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,27 @@ public class AdminReportService {
     private final CustomerRepository customerRepository;
 
     public Map<String, Object> getRevenueReport(String granularity, String startDateStr, String endDateStr) {
-        LocalDate startDate = LocalDate.parse(startDateStr);
-        LocalDate endDate = LocalDate.parse(endDateStr);
+        // TC01: Nếu không có filter ngày → dùng toàn bộ lịch sử
+        // TC13: Không cần kiểm tra lại ở đây vì Controller đã validate
+        final LocalDate startDate;
+        final LocalDate endDate;
+
+        if (startDateStr == null || startDateStr.isBlank()) {
+            startDate = LocalDate.of(2000, 1, 1); // cover toàn bộ lịch sử hệ thống
+        } else {
+            startDate = LocalDate.parse(startDateStr);
+        }
+
+        if (endDateStr == null || endDateStr.isBlank()) {
+            endDate = LocalDate.now();
+        } else {
+            endDate = LocalDate.parse(endDateStr);
+        }
+
+        // TC13: Nếu startDate sau endDate → trả kết quả rỗng (không lỗi)
+        if (startDate.isAfter(endDate)) {
+            return buildEmptyRevenueReport();
+        }
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
@@ -162,9 +182,29 @@ public class AdminReportService {
         return report;
     }
 
+    // -------------------------------------------------------------------------
+    // Helper: trả báo cáo rỗng (TC12: không có dữ liệu, TC13: date range ngược, TC16: tương lai)
+    // -------------------------------------------------------------------------
+    private Map<String, Object> buildEmptyRevenueReport() {
+        Map<String, Object> report = new LinkedHashMap<>();
+        report.put("totalRevenue", BigDecimal.ZERO);
+        report.put("avgRevenuePerDay", BigDecimal.ZERO);
+        report.put("totalWashes", 0);
+        report.put("avgRevenuePerWash", BigDecimal.ZERO);
+        report.put("washBreakdown", Map.of("motorbike", 0L, "car", 0L));
+        report.put("serviceRevenueBreakdown",
+                Map.of("basicWashPercent", 0.0, "premiumWashPercent", 0.0, "fullDetailPercent", 0.0));
+        report.put("chartData", Collections.emptyList());
+        report.put("topDays", Collections.emptyList());
+        return report;
+    }
+
     public Map<String, Object> getCustomerReport(String startDateStr, String endDateStr) {
-        LocalDate startDate = LocalDate.parse(startDateStr);
-        LocalDate endDate = LocalDate.parse(endDateStr);
+        // Optional date params — default to all-time range
+        final LocalDate startDate = (startDateStr == null || startDateStr.isBlank())
+                ? LocalDate.of(2000, 1, 1) : LocalDate.parse(startDateStr);
+        final LocalDate endDate = (endDateStr == null || endDateStr.isBlank())
+                ? LocalDate.now() : LocalDate.parse(endDateStr);
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);

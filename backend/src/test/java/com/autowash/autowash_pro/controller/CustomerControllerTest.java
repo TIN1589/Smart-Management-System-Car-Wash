@@ -1,6 +1,7 @@
 package com.autowash.autowash_pro.controller;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,7 +70,7 @@ public class CustomerControllerTest {
     // Test Case 4: POST Create New Customer
     @Test
     public void testCreateCustomer_Success() throws Exception {
-        when(customerService.createCustomerAtCounter(Mockito.any())).thenReturn(Customer.builder()
+        when(customerService.createCustomerAtCounter(any())).thenReturn(Customer.builder()
                 .customerId(UUID.randomUUID())
                 .fullName("Nguyen Van A")
                 .phone("0987654321")
@@ -86,7 +87,7 @@ public class CustomerControllerTest {
     @Test
     public void testUpdateCustomer_Success() throws Exception {
         UUID customerId = UUID.randomUUID();
-        when(customerService.updateCustomer(Mockito.eq(customerId), Mockito.any())).thenReturn(Customer.builder()
+        when(customerService.updateCustomer(eq(customerId), any())).thenReturn(Customer.builder()
                 .customerId(customerId)
                 .fullName("Nguyen Van A Updated")
                 .phone("0987654321")
