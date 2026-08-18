@@ -295,11 +295,11 @@ export function ClientProfilePage() {
       .then((data) => {
         dispatch(updateUser({
           id: data.id || data.customerId || customerId || undefined,
-          name: data.name || data.fullName || user?.name,
-          fullName: data.fullName || data.name || user?.fullName || user?.name,
-          phone: data.phone || user?.phone,
-          email: data.email || user?.email,
-          role: data.role || user?.role
+          name: data.name || data.fullName,
+          fullName: data.fullName || data.name,
+          phone: data.phone,
+          email: data.email,
+          role: data.role
         }))
       })
       .catch((err) => {

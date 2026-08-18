@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Plus, Edit2, Trash2, Tag } from 'lucide-react' 
 import { motion, AnimatePresence } from 'motion/react'
 import toast from 'react-hot-toast'
@@ -32,7 +32,7 @@ export function AdminArticlesPage() {
   const [author, setAuthor] = useState('')
 
   // Hàm fetch bài viết từ database backend
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     setLoading(true)
     try {
       const params: any = {}
@@ -55,14 +55,14 @@ export function AdminArticlesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, searchQuery])
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchArticles()
     }, 300)
     return () => clearTimeout(delayDebounceFn)
-  }, [activeTab, searchQuery])
+  }, [fetchArticles])
 
   // Handle open modal for create
   const handleOpenCreate = () => {

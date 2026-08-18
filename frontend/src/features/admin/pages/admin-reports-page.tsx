@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Calendar,
   Download,
@@ -43,7 +43,7 @@ export function AdminReportsPage() {
   // TC20: Error state — hiển thị thông báo thân thiện khi API lỗi/timeout
   const [apiError, setApiError] = useState<string | null>(null)
 
-  const fetchReportsData = async () => {
+  const fetchReportsData = useCallback(async () => {
     setLoading(true)
     setApiError(null) // TC20: reset error mỗi lần fetch
     try {
@@ -136,32 +136,12 @@ export function AdminReportsPage() {
     } finally {
       setLoading(false)
     }
-}
-
-  // TC18: useEffect dependency [granularity, startDate, endDate] — filter thay đổi tự động re-fetch
-  useEffect(() => {
-    fetchReportsData()
   }, [granularity, startDate, endDate])
 
-  // TC20: Error banner — hiển thị khi API lỗi/timeout
-  const ErrorBanner = () => (
-    <div className="mx-auto max-w-7xl mb-4">
-      <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-sm">
-        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-red-500" />
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-red-700">Không thể tải dữ liệu báo cáo</p>
-          <p className="mt-0.5 text-xs text-red-500">{apiError}</p>
-        </div>
-        <button
-          onClick={() => fetchReportsData()}
-          className="flex items-center gap-1.5 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-200 transition-colors"
-        >
-          <RefreshCw size={12} />
-          Thử lại
-        </button>
-      </div>
-    </div>
-  )
+  // TC18: useEffect dependency [fetchReportsData] — filter thay đổi tự động re-fetch
+  useEffect(() => {
+    fetchReportsData()
+  }, [fetchReportsData])
 
   if (loading) {
     return (
@@ -209,7 +189,24 @@ export function AdminReportsPage() {
 
       <main className="min-h-screen px-6 pb-8 pt-24 lg:pl-[calc(16rem+24px)]">
         {/* TC20: Error banner — hiển thị khi API lỗi/timeout, thân thiện với người dùng */}
-        {apiError && <ErrorBanner />}
+        {apiError && (
+          <div className="mx-auto max-w-7xl mb-4">
+            <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-sm">
+              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-red-500" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-red-700">Không thể tải dữ liệu báo cáo</p>
+                <p className="mt-0.5 text-xs text-red-500">{apiError}</p>
+              </div>
+              <button
+                onClick={() => fetchReportsData()}
+                className="flex items-center gap-1.5 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-200 transition-colors"
+              >
+                <RefreshCw size={12} />
+                Thử lại
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mx-auto max-w-7xl space-y-6">
           

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Plus } from 'lucide-react'
 import { AdminPromotionShell } from '@/features/admin/components/admin-promotion-shell'
 import { AdminTopbar } from '@/features/admin/components/admin-topbar' // 🌟 Import Topbar để gộp ô tìm kiếm
@@ -28,7 +28,7 @@ export function AdminPromotionsPage() {
   // =========================================================================
   // ĐỒNG BỘ API TÌM KIẾM THÔNG MINH + SẮP XẾP VÀ GỘP TRÙNG REAL-TIME THEO TÊN
   // =========================================================================
-  const fetchPromotions = async () => {
+  const fetchPromotions = useCallback(async () => {
     setLoading(true)
     try {
       const params: any = {}
@@ -102,7 +102,7 @@ export function AdminPromotionsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [activeTab, searchQuery])
 
   // XỬ LÝ LẬT TRẠNG THÁI TOGGLE SWITCH (OPTIMISTIC UPDATE)
   const handleToggleStatus = async (id: string) => {
@@ -136,7 +136,7 @@ export function AdminPromotionsPage() {
     }, 300)
 
     return () => clearTimeout(handler)
-  }, [activeTab, searchQuery])
+  }, [fetchPromotions])
 
   return (
     <AdminPromotionShell>

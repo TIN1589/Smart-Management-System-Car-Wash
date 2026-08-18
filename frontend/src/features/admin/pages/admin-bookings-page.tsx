@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Plus, Calendar, MoreVertical, Info, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Badge } from '@/shared/components/ui/badge'
@@ -52,7 +52,7 @@ export function AdminBookingsPage() {
   const [newServiceIds, setNewServiceIds] = useState<string[]>([]);
 
   // Load bookings list
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     setLoading(true)
     try {
       const apiStatus = selectedStatusFilter === 'Tất cả trạng thái' ? undefined : selectedStatusFilter
@@ -82,7 +82,7 @@ export function AdminBookingsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedStatusFilter, dateRangeText, searchText, currentPage])
 
   // Load all active services for select menu
   useEffect(() => {
@@ -106,7 +106,7 @@ export function AdminBookingsPage() {
       fetchBookings()
     }, 300)
     return () => clearTimeout(delayDebounceFn)
-  }, [selectedStatusFilter, dateRangeText, searchText, currentPage])
+  }, [fetchBookings])
 
   const onUpdateBookingStatus = async (id: string, newStatus: Booking['status']) => {
     try {
