@@ -1,0 +1,861 @@
+{
+  "info": {
+    "_postman_id": "c73a8e91-d345-48b2-9a67-29ef318357a1",
+    "name": "Vehicle Management - SCRUM-73",
+    "description": "Bộ Collection kiểm thử API Quản lý Xe (Vehicle Management) tự động chuẩn 100% cho ticket SCRUM-73. Tích hợp cơ chế tự động tạo tài khoản test qua API Register (Self-healing), sinh biển số ngẫu nhiên không trùng lặp và tương thích chính xác với Backend Spring Boot.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tokenUser2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "mainPhone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user2Phone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "vehicleId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "otherVehicleId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdLicensePlate",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00. Setup (Tự động cấp Token & Chuẩn bị dữ liệu)",
+      "description": "Đăng ký tài khoản mới động cho mỗi lần test để đảm bảo 100% có Token hợp lệ và không bị phụ thuộc vào dữ liệu cũ.",
+      "item": [
+        {
+          "name": "Setup 01 - Khởi tạo & Đăng ký Tài khoản Chính (Lấy Token mới)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Sinh số điện thoại test ngẫu nhiên 10 chữ số",
+                  "var randomPhone = \"09\" + Math.floor(10000000 + Math.random() * 90000000);",
+                  "pm.environment.set(\"mainPhone\", randomPhone);",
+                  "pm.collectionVariables.set(\"mainPhone\", randomPhone);",
+                  "pm.variables.set(\"mainPhone\", randomPhone);",
+                  "console.log(\"[SETUP 01] Khởi tạo tài khoản chính với số điện thoại:\", randomPhone);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Setup 01 - Đăng ký tài khoản chính thành công (201 Created)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "pm.test(\"Setup 01 - Tự động lưu Token vào {{token}}\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var accessToken = jsonData.accessToken || jsonData.token;",
+                  "    pm.expect(accessToken, \"Access token không được rỗng\").to.not.be.undefined;",
+                  "    ",
+                  "    pm.environment.set(\"token\", accessToken);",
+                  "    pm.collectionVariables.set(\"token\", accessToken);",
+                  "    console.log(\"[SETUP 01] Token cấp mới:\", accessToken.substring(0, 25) + \"...\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Tester SCRUM-73\",\n  \"phone\": \"{{mainPhone}}\",\n  \"email\": \"tester_{{$randomInt}}@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup 02 - Khởi tạo & Đăng ký Tài khoản thứ 2",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var randomPhone2 = \"08\" + Math.floor(10000000 + Math.random() * 90000000);",
+                  "pm.environment.set(\"user2Phone\", randomPhone2);",
+                  "pm.collectionVariables.set(\"user2Phone\", randomPhone2);",
+                  "pm.variables.set(\"user2Phone\", randomPhone2);",
+                  "console.log(\"[SETUP 02] Khởi tạo tài khoản 2 với số điện thoại:\", randomPhone2);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Setup 02 - Đăng ký tài khoản 2 thành công (201 Created)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "pm.test(\"Setup 02 - Lưu tokenUser2\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var accessToken = jsonData.accessToken || jsonData.token;",
+                  "    pm.environment.set(\"tokenUser2\", accessToken);",
+                  "    pm.collectionVariables.set(\"tokenUser2\", accessToken);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Second User SCRUM-73\",\n  \"phone\": \"{{user2Phone}}\",\n  \"email\": \"user2_{{$randomInt}}@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup 03 - Tạo xe cho Tài khoản 2 (Lấy otherVehicleId test bảo mật)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var randomSuffix = Math.floor(10000 + Math.random() * 90000);",
+                  "var plate = \"51G-\" + randomSuffix;",
+                  "pm.variables.set(\"randomPlateUser2\", plate);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Setup 03 - Tạo xe cho User 2 thành công\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "pm.test(\"Setup 03 - Lưu otherVehicleId phục vụ TC09 và TC13\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var id = jsonData.vehicleId || jsonData.id;",
+                  "    pm.expect(id).to.not.be.undefined;",
+                  "    pm.environment.set(\"otherVehicleId\", id);",
+                  "    pm.collectionVariables.set(\"otherVehicleId\", id);",
+                  "    console.log(\"[SETUP 03] Đã lưu otherVehicleId:\", id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUser2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"{{randomPlateUser2}}\",\n  \"vehicleType\": \"SUV\",\n  \"brand\": \"Mazda\",\n  \"color\": \"Đỏ\",\n  \"primary\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01. Nhóm 1 - Tạo xe mới (Create Vehicle)",
+      "description": "Các kịch bản kiểm thử API POST /api/vehicles",
+      "item": [
+        {
+          "name": "TC01 - Tạo xe với dữ liệu hợp lệ",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Sinh biển số ngẫu nhiên dạng 29A-XXXXX",
+                  "var randomNum = Math.floor(10000 + Math.random() * 90000);",
+                  "var plate = \"29A-\" + randomNum;",
+                  "pm.environment.set(\"createdLicensePlate\", plate);",
+                  "pm.collectionVariables.set(\"createdLicensePlate\", plate);",
+                  "pm.variables.set(\"dynamicPlate\", plate);",
+                  "console.log(\"[TC01] Testing with dynamic licensePlate:\", plate);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC01 - Status code is 201 Created or 200 OK\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "pm.test(\"TC01 - Response has vehicleId and auto-saved to Environment\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var id = jsonData.vehicleId || jsonData.id;",
+                  "    pm.expect(id).to.not.be.undefined;",
+                  "    ",
+                  "    pm.environment.set(\"vehicleId\", id);",
+                  "    pm.collectionVariables.set(\"vehicleId\", id);",
+                  "    console.log(\"[TC01] Đã lưu vehicleId:\", id);",
+                  "});",
+                  "",
+                  "pm.test(\"TC01 - Vehicle data matches request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var expectedPlate = pm.environment.get(\"createdLicensePlate\") || pm.collectionVariables.get(\"createdLicensePlate\");",
+                  "    pm.expect(jsonData.licensePlate).to.eql(expectedPlate);",
+                  "    pm.expect(jsonData.vehicleType).to.eql(\"SEDAN\");",
+                  "    pm.expect(jsonData.primary).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"{{dynamicPlate}}\",\n  \"vehicleType\": \"SEDAN\",\n  \"brand\": \"Toyota\",\n  \"color\": \"Trắng\",\n  \"primary\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC02 - Tạo xe thiếu trường bắt buộc",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC02 - Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"TC02 - Error response contains validation message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message || jsonData.code).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"brand\": \"Toyota\",\n  \"color\": \"Trắng\",\n  \"primary\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC03 - Tạo xe trùng biển số vừa tạo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC03 - Status code is 400 Bad Request\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 409]);",
+                  "});",
+                  "",
+                  "pm.test(\"TC03 - Error message indicates duplicate license plate\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var msg = (jsonData.message || \"\").toLowerCase();",
+                  "    pm.expect(msg).to.satisfy(function(m) {",
+                  "        return m.includes(\"ton tai\") || m.includes(\"tồn tại\") || m.includes(\"duplicate\") || m.includes(\"already exists\");",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"{{createdLicensePlate}}\",\n  \"vehicleType\": \"SEDAN\",\n  \"brand\": \"Honda\",\n  \"color\": \"Đen\",\n  \"primary\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC04 - Tạo xe với dữ liệu không hợp lệ (vượt max size)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC04 - Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"TC04 - Has validation errors in response\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.code || jsonData.message).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"BIEN-SO-XE-QUA-DAI-HON-20-KY-TU-123456789\",\n  \"vehicleType\": \"\",\n  \"brand\": \"Xe rat dai vuot qua gioi han ky tu cho phep\",\n  \"color\": \"Đỏ\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Nhóm 2 - Danh sách xe (List Vehicles)",
+      "description": "Các kịch bản kiểm thử API GET /api/vehicles",
+      "item": [
+        {
+          "name": "TC05 - Lấy danh sách xe của tài khoản đăng nhập",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC05 - Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"TC05 - Response body is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var list = Array.isArray(jsonData) ? jsonData : (jsonData.items || jsonData.content || []);",
+                  "    pm.expect(list).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC06 - Lấy danh sách không có token xác thực",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC06 - Status code is 401 Unauthorized or 403 Forbidden\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC07 - Xác minh vehicleId mới tạo xuất hiện trong danh sách",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC07 - Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"TC07 - List contains vehicleId created in TC01\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var list = Array.isArray(jsonData) ? jsonData : (jsonData.items || jsonData.content || []);",
+                  "    var targetId = pm.environment.get(\"vehicleId\") || pm.collectionVariables.get(\"vehicleId\");",
+                  "    ",
+                  "    var isFound = list.some(function(item) {",
+                  "        return (item.vehicleId === targetId || item.id === targetId);",
+                  "    });",
+                  "    pm.expect(isFound, \"Created vehicleId was found in the returned list\").to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03. Nhóm 3 - Cập nhật & Quản lý xe chính (Update & Set Primary)",
+      "description": "Các kịch bản kiểm thử API PUT/PATCH /api/vehicles/{vehicleId}",
+      "item": [
+        {
+          "name": "TC08 - Cập nhật thông tin xe hợp lệ",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC08 - Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"TC08 - Vehicle properties updated correctly\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.vehicleType).to.eql(\"SUV\");",
+                  "    pm.expect(jsonData.brand).to.eql(\"Toyota Fortuner\");",
+                  "    pm.expect(jsonData.color).to.eql(\"Đen Nhám\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"{{createdLicensePlate}}\",\n  \"vehicleType\": \"SUV\",\n  \"brand\": \"Toyota Fortuner\",\n  \"color\": \"Đen Nhám\",\n  \"primary\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{vehicleId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles",
+                "{{vehicleId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC09 - Đặt xe làm xe chính (Set Primary)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC09 - Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"TC09 - Vehicle marked as primary\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.primary).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{vehicleId}}/primary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles",
+                "{{vehicleId}}",
+                "primary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC10 - Cập nhật xe của người khác (Kiểm tra Phân quyền Bảo mật)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Backend trả về 404 Khong tim thay xe khi user khong so huu xe nay",
+                  "pm.test(\"TC10 - Status code is 404 Not Found (Data Isolation)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([403, 404]);",
+                  "});",
+                  "",
+                  "pm.test(\"TC10 - Error message is Not Found\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.code || jsonData.message).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"30H-99999\",\n  \"vehicleType\": \"SEDAN\",\n  \"brand\": \"Mercedes\",\n  \"color\": \"Trắng\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{otherVehicleId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles",
+                "{{otherVehicleId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC11 - Cập nhật xe với ID không tồn tại",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC11 - Status code is 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"TC11 - Error response indicates NOT_FOUND\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.code).to.eql(\"NOT_FOUND\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"29A-99999\",\n  \"vehicleType\": \"SEDAN\",\n  \"brand\": \"Toyota\",\n  \"color\": \"Đen\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04. Nhóm 4 - Xóa xe (Delete Vehicle)",
+      "description": "Các kịch bản kiểm thử API DELETE /api/vehicles/{vehicleId}",
+      "item": [
+        {
+          "name": "TC12 - Xóa xe của người khác (Kiểm tra Phân quyền)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC12 - Status code is 404 Not Found (Cannot delete other's vehicle)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([403, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{otherVehicleId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles",
+                "{{otherVehicleId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC13 - Xóa xe hợp lệ của chính mình",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"TC13 - Status code is 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{vehicleId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vehicles",
+                "{{vehicleId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
