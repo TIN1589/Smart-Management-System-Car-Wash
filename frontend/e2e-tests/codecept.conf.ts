@@ -16,5 +16,5 @@ export const config: CodeceptJS.MainConfig = {
     },
   },
 
-  name: 'SmartWashCar Authentication E2E Tests',
+ name: 'SmartWashCar E2E Regression Tests',
 };
