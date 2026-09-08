@@ -17,3 +17,7 @@
 # Environment & Database session
 *.env
 *.log
+
+# Local dev notes — internal only, NOT for git
+DEV_NOTES_*.md
+dev_notes_*.md
