@@ -122,15 +122,15 @@ class BookingAvailabilityCancellationTest {
 
         when(customerRepository.findByPhone(CUSTOMER_PHONE)).thenReturn(Optional.of(customer));
         when(adminConfigService.getSystemConfig()).thenReturn(systemConfig);
-        // Cada slot consulta a contagem; aqui stubamos "any slot" para retornar 2 (capacidade máxima)
+        // Mỗi slot gọi riêng countByScheduledAt — stub any(LocalDateTime) để cover toàn bộ 20 slot trong ngày
         when(bookingRepository.countByScheduledAtAndStatusIn(any(LocalDateTime.class), anyList()))
                 .thenReturn(2);
 
         List<AvailabilitySlotResponse> slots = bookingService.getAvailability(tomorrow, authenticatedCustomer);
 
-        assertFalse(slots.isEmpty(), "Deve retornar slots mesmo que todos estejam cheios");
+        assertFalse(slots.isEmpty(), "Phải trả về danh sách slot dù tất cả đã đầy");
         assertTrue(slots.stream().noneMatch(AvailabilitySlotResponse::isAvailable),
-                "Nenhum slot deve estar disponível quando capacity=2/2");
+                "Không slot nào available khi capacity=2/2");
     }
 
     @Test
@@ -167,9 +167,9 @@ class BookingAvailabilityCancellationTest {
         BookingResponse response = bookingService.cancelBooking(bookingId, authenticatedCustomer);
 
         assertEquals(BookingStatus.CANCELLED, response.getStatus());
-        // Pontos usados na reserva devem ser devolvidos ao saldo do cliente
+        // Điểm đã trừ lúc đặt lịch phải được hoàn về tổng điểm của khách
         assertEquals(customer.getTotalPoints(), 100 + pointsUsedOnBooking,
-                "totalPoints deve ser restaurado após o cancelamento");
+                "totalPoints phải được khôi phục sau khi hủy");
         verify(customerPointsRepository).save(any(CustomerPoints.class));
         verify(notificationService).sendBookingStatusChanged(any(Booking.class));
     }
@@ -222,7 +222,7 @@ class BookingAvailabilityCancellationTest {
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(inProgressBooking));
         when(bookingRepository.save(any(Booking.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        // Admin não precisa de findByPhone pois o acesso não é verificado para admins
+        // Admin không cần qua kiểm tra ownership — isAdmin() short-circuit trước khi query customer
         BookingResponse response = bookingService.cancelBooking(bookingId, adminUser);
 
         assertEquals(BookingStatus.CANCELLED, response.getStatus());
@@ -238,7 +238,7 @@ class BookingAvailabilityCancellationTest {
         BookingResponse response = bookingService.cancelBooking(bookingId, authenticatedCustomer);
 
         assertEquals(BookingStatus.CANCELLED, response.getStatus());
-        // Segunda chamada não deve persistir nada nem enviar notificação
+        // Gọi cancel lần 2 không được persist thêm hay gửi notification — tránh double-event bug
         verify(bookingRepository, never()).save(any());
         verify(notificationService, never()).sendBookingStatusChanged(any());
     }
