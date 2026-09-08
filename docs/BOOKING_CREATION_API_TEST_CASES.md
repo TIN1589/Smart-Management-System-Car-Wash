@@ -23,11 +23,11 @@ finalAmount = Σ(service.basePrice) − promoDiscount − (usedPoints × 100 VND
 
 | # | Tên test | Điều kiện đầu vào | Kết quả kỳ vọng | Kết quả thực tế |
 |---|----------|-------------------|-----------------|-----------------|
-| 1 | `createBooking_chargesFullServicePriceWhenNoDiscounts` | 1 service 50k, không promo, không điểm | totalAmount=50,000, status=PENDING | ✅ PASS |
-| 2 | `createBooking_appliesPercentagePromoAndIncrementsUsageCount` | Promo 20%, không maxDiscount, mở tất cả tier | discount=10,000, total=40,000, usageCount+1 | ✅ PASS |
-| 3 | `createBooking_deductsLoyaltyPointsViaFifoAndLogsRedemption` | usedPoints=100 (customer có 200 điểm) | total=40,000, `deductPointsFifo` gọi đúng, log REDEEM được lưu | ✅ PASS |
-| 4 | `createBooking_rejectsRequestWhenNoneOfTheServiceIdsExist` | serviceIds chứa UUID không tồn tại trong DB | `BusinessException`, `bookingRepository.save` không được gọi | ✅ PASS |
-| 5 | `createBooking_rejectsRequestWhenSlotHasReachedCapacity` | slot có 2 booking active (SLOT_CAPACITY=2) | `BusinessException`, booking không được tạo | ✅ PASS |
+| 1 | `createBooking_chargesFullServicePriceWhenNoDiscounts` | 1 service 50k, không promo, không điểm | totalAmount=50,000, status=PENDING | PASS |
+| 2 | `createBooking_appliesPercentagePromoAndIncrementsUsageCount` | Promo 20%, không maxDiscount, mở tất cả tier | discount=10,000, total=40,000, usageCount+1 | PASS |
+| 3 | `createBooking_deductsLoyaltyPointsViaFifoAndLogsRedemption` | usedPoints=100 (customer có 200 điểm) | total=40,000, `deductPointsFifo` gọi đúng, log REDEEM được lưu | PASS |
+| 4 | `createBooking_rejectsRequestWhenNoneOfTheServiceIdsExist` | serviceIds chứa UUID không tồn tại trong DB | `BusinessException`, `bookingRepository.save` không được gọi | PASS |
+| 5 | `createBooking_rejectsRequestWhenSlotHasReachedCapacity` | slot có 2 booking active (SLOT_CAPACITY=2) | `BusinessException`, booking không được tạo | PASS |
 
 **Tổng: 5/5 PASS**
 
