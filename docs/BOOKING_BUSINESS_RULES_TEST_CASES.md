@@ -41,22 +41,22 @@ CANCELLED  → terminal (không chuyển được)
 
 | # | Tên test | Slot đầu vào | Lý do reject | Kết quả |
 |---|----------|-------------|--------------|---------|
-| 1 | `createBooking_rejectsSlotAtOddMinuteMark` | 08:15 | Phút không phải 0 hoặc 30 | ✅ PASS |
-| 2 | `createBooking_rejectsSlotBeforeOpeningHour` | 07:00 | Trước giờ mở cửa 08:00 | ✅ PASS |
-| 3 | `createBooking_rejectsSlotAfterClosingHour` | 18:00 | Đúng giờ đóng cửa (inclusive) | ✅ PASS |
-| 4 | `createBooking_rejectsSlotWithLessThan30MinutesNotice` | now + 20 phút | Chưa đủ 30 phút báo trước | ✅ PASS |
-| 5 | `createBooking_rejectsMemberBookingBeyond7DayWindow` | now + 8 ngày | MEMBER window = 7 ngày | ✅ PASS |
+| 1 | `createBooking_rejectsSlotAtOddMinuteMark` | 08:15 | Phút không phải 0 hoặc 30 | PASS |
+| 2 | `createBooking_rejectsSlotBeforeOpeningHour` | 07:00 | Trước giờ mở cửa 08:00 | PASS |
+| 3 | `createBooking_rejectsSlotAfterClosingHour` | 18:00 | Đúng giờ đóng cửa (inclusive) | PASS |
+| 4 | `createBooking_rejectsSlotWithLessThan30MinutesNotice` | now + 20 phút | Chưa đủ 30 phút báo trước | PASS |
+| 5 | `createBooking_rejectsMemberBookingBeyond7DayWindow` | now + 8 ngày | MEMBER window = 7 ngày | PASS |
 
 ### Status Transition
 
 | # | Tên test | Transition | Hợp lệ? | Kết quả |
 |---|----------|-----------|---------|---------|
-| 6 | `updateStatus_rejectsInvalidTransition_pendingToDone` | PENDING → DONE | ❌ Bỏ qua CONFIRMED + IN_PROGRESS | ✅ PASS |
-| 7 | `updateStatus_rejectsInvalidTransition_confirmedToDone` | CONFIRMED → DONE | ❌ Bỏ qua IN_PROGRESS | ✅ PASS |
-| 8 | `updateStatus_rejectsAnyTransitionFromTerminalStatus` | DONE → PENDING | ❌ Terminal không chuyển được | ✅ PASS |
-| 9 | `updateStatus_allowsValidTransition_pendingToConfirmed` | PENDING → CONFIRMED | ✅ | ✅ PASS |
-| 10 | `updateStatus_allowsValidTransition_confirmedToInProgress` | CONFIRMED → IN_PROGRESS | ✅ | ✅ PASS |
-| 11 | `updateStatus_allowsValidTransition_inProgressToDone` | IN_PROGRESS → DONE | ✅ + earnPoints được gọi | ✅ PASS |
+| 6 | `updateStatus_rejectsInvalidTransition_pendingToDone` | PENDING → DONE | Không hợp lệ (Bỏ qua CONFIRMED + IN_PROGRESS) | PASS |
+| 7 | `updateStatus_rejectsInvalidTransition_confirmedToDone` | CONFIRMED → DONE | Không hợp lệ (Bỏ qua IN_PROGRESS) | PASS |
+| 8 | `updateStatus_rejectsAnyTransitionFromTerminalStatus` | DONE → PENDING | Không hợp lệ (Terminal không chuyển được) | PASS |
+| 9 | `updateStatus_allowsValidTransition_pendingToConfirmed` | PENDING → CONFIRMED | Hợp lệ | PASS |
+| 10 | `updateStatus_allowsValidTransition_confirmedToInProgress` | CONFIRMED → IN_PROGRESS | Hợp lệ | PASS |
+| 11 | `updateStatus_allowsValidTransition_inProgressToDone` | IN_PROGRESS → DONE | Hợp lệ (earnPoints được gọi) | PASS |
 
 **Tổng: 11/11 PASS**
 
