@@ -51,14 +51,14 @@ value > 100  → số tiền cố định: discount = value
 
 | # | Tên test | Kịch bản | Kết quả kỳ vọng | Kết quả thực tế |
 |---|----------|----------|-----------------|-----------------|
-| 1 | `createBooking_rejectsPromoWhenCustomerTierIsBelowMinimumRequired` | MEMBER + promo `SILVER,GOLD,PLATINUM` | `BusinessException` (rank 1 < 2) | ✅ PASS |
-| 2 | `createBooking_allowsPromoWhenCustomerTierMeetsMinimumRequired` | GOLD + promo `SILVER,GOLD` | discount=40,000, total=160,000 | ✅ PASS |
-| 3 | `createBooking_allowsPromoWhenTargetTiersIsEmptyMeaningOpenToAll` | MEMBER + promo `targetTiers=""` | Promo áp dụng được | ✅ PASS |
-| 4 | `createBooking_rejectsPromoThatHasExpired` | `endsAt` ở quá khứ | `BusinessException` | ✅ PASS |
-| 5 | `createBooking_rejectsPromoWhenUsageLimitIsReached` | `usageCount == usageLimit` | `BusinessException` | ✅ PASS |
-| 6 | `createBooking_rejectsPromoWhenCustomerHasAlreadyUsedIt` | `existsByCustomer...` = true | `BusinessException` | ✅ PASS |
-| 7 | `createBooking_capsPercentageDiscountAtMaxDiscount` | 30% × 200k = 60k > maxDiscount=50k | discount=50,000 (bị cap) | ✅ PASS |
-| 8 | `createBooking_appliesFixedAmountDiscountWhenPromoValueExceeds100` | value=150,000 (> 100) → fixed | discount=150,000 (capped tại total=200k) | ✅ PASS |
+| 1 | `createBooking_rejectsPromoWhenCustomerTierIsBelowMinimumRequired` | MEMBER + promo `SILVER,GOLD,PLATINUM` | `BusinessException` (rank 1 < 2) | PASS |
+| 2 | `createBooking_allowsPromoWhenCustomerTierMeetsMinimumRequired` | GOLD + promo `SILVER,GOLD` | discount=40,000, total=160,000 | PASS |
+| 3 | `createBooking_allowsPromoWhenTargetTiersIsEmptyMeaningOpenToAll` | MEMBER + promo `targetTiers=""` | Promo áp dụng được | PASS |
+| 4 | `createBooking_rejectsPromoThatHasExpired` | `endsAt` ở quá khứ | `BusinessException` | PASS |
+| 5 | `createBooking_rejectsPromoWhenUsageLimitIsReached` | `usageCount == usageLimit` | `BusinessException` | PASS |
+| 6 | `createBooking_rejectsPromoWhenCustomerHasAlreadyUsedIt` | `existsByCustomer...` = true | `BusinessException` | PASS |
+| 7 | `createBooking_capsPercentageDiscountAtMaxDiscount` | 30% × 200k = 60k > maxDiscount=50k | discount=50,000 (bị cap) | PASS |
+| 8 | `createBooking_appliesFixedAmountDiscountWhenPromoValueExceeds100` | value=150,000 (> 100) → fixed | discount=150,000 (capped tại total=200k) | PASS |
 
 **Tổng: 8/8 PASS**
 
