@@ -7,7 +7,7 @@
 
 ## Tổng quan
 
-SCRUM-61 là bước xác nhận cuối — chạy toàn bộ test suite sau khi các SCRUM-40→49 hoàn thành, đảm bảo tất cả test cases không conflict với nhau khi chạy cùng môi trường.
+SCRUM-61 là bước xác nhận cuối — chạy toàn bộ test suite sau khi các SCRUM-40 đến SCRUM-49 hoàn thành, đảm bảo tất cả test cases không conflict với nhau khi chạy cùng môi trường.
 
 ---
 
@@ -22,14 +22,14 @@ BUILD SUCCESS
 
 ## Bảng tổng hợp
 
-| SCRUM | Test class | Cases | PASS |
-|-------|-----------|-------|------|
-| 40 | `BookingCreationServiceTest` | 5 | ✅ 5 |
-| 41 | `BookingAvailabilityCancellationTest` | 7 | ✅ 7 |
-| 43 | `BookingBusinessRulesTest` | 11 | ✅ 11 |
-| 47 | `LoyaltyServiceTest` | 8 | ✅ 8 |
-| 49 | `PromotionValidationTest` | 8 | ✅ 8 |
-| **Tổng** | | **39** | **✅ 39** |
+| SCRUM | Test class | Cases | Kết quả |
+|-------|-----------|-------|---------|
+| 40 | `BookingCreationServiceTest` | 5 | PASS (5/5) |
+| 41 | `BookingAvailabilityCancellationTest` | 7 | PASS (7/7) |
+| 43 | `BookingBusinessRulesTest` | 11 | PASS (11/11) |
+| 47 | `LoyaltyServiceTest` | 8 | PASS (8/8) |
+| 49 | `PromotionValidationTest` | 8 | PASS (8/8) |
+| **Tổng** | | **39** | **PASS (39/39)** |
 
 ---
 
@@ -37,65 +37,65 @@ BUILD SUCCESS
 
 | Test | Kết quả |
 |------|---------|
-| `createBooking_chargesFullServicePriceWhenNoDiscounts` | ✅ |
-| `createBooking_appliesPercentagePromoAndIncrementsUsageCount` | ✅ |
-| `createBooking_deductsLoyaltyPointsViaFifoAndLogsRedemption` | ✅ |
-| `createBooking_rejectsRequestWhenNoneOfTheServiceIdsExist` | ✅ |
-| `createBooking_rejectsRequestWhenSlotHasReachedCapacity` | ✅ |
+| `createBooking_chargesFullServicePriceWhenNoDiscounts` | PASS |
+| `createBooking_appliesPercentagePromoAndIncrementsUsageCount` | PASS |
+| `createBooking_deductsLoyaltyPointsViaFifoAndLogsRedemption` | PASS |
+| `createBooking_rejectsRequestWhenNoneOfTheServiceIdsExist` | PASS |
+| `createBooking_rejectsRequestWhenSlotHasReachedCapacity` | PASS |
 
 ## Chi tiết SCRUM-41 — Availability & Cancellation (7/7)
 
 | Test | Kết quả |
 |------|---------|
-| `getAvailability_returnsSlotAsUnavailableWhenAtFullCapacity` | ✅ |
-| `getAvailability_marksSlotAsAvailableWhenCapacityHasRoom` | ✅ |
-| `cancelBooking_refundsPointsAndTransitionsStatusToCancelled` | ✅ |
-| `cancelBooking_throwsWhenTryingToCancelACompletedBooking` | ✅ |
-| `cancelBooking_throwsWhenCustomerAttemptsToAccessAnotherCustomersBooking` | ✅ |
-| `cancelBooking_allowsAdminToForceCancel_evenWhenInProgress` | ✅ |
-| `cancelBooking_isIdempotentWhenBookingIsAlreadyCancelled` | ✅ |
+| `getAvailability_returnsSlotAsUnavailableWhenAtFullCapacity` | PASS |
+| `getAvailability_marksSlotAsAvailableWhenCapacityHasRoom` | PASS |
+| `cancelBooking_refundsPointsAndTransitionsStatusToCancelled` | PASS |
+| `cancelBooking_throwsWhenTryingToCancelACompletedBooking` | PASS |
+| `cancelBooking_throwsWhenCustomerAttemptsToAccessAnotherCustomersBooking` | PASS |
+| `cancelBooking_allowsAdminToForceCancel_evenWhenInProgress` | PASS |
+| `cancelBooking_isIdempotentWhenBookingIsAlreadyCancelled` | PASS |
 
 ## Chi tiết SCRUM-43 — Business Rules (11/11)
 
 | Test | Kết quả |
 |------|---------|
-| `createBooking_rejectsSlotAtOddMinuteMark` | ✅ |
-| `createBooking_rejectsSlotBeforeOpeningHour` | ✅ |
-| `createBooking_rejectsSlotAfterClosingHour` | ✅ |
-| `createBooking_rejectsSlotWithLessThan30MinutesNotice` | ✅ |
-| `createBooking_rejectsMemberBookingBeyond7DayWindow` | ✅ |
-| `updateStatus_rejectsInvalidTransition_pendingToDone` | ✅ |
-| `updateStatus_rejectsInvalidTransition_confirmedToDone` | ✅ |
-| `updateStatus_rejectsAnyTransitionFromTerminalStatus` | ✅ |
-| `updateStatus_allowsValidTransition_pendingToConfirmed` | ✅ |
-| `updateStatus_allowsValidTransition_confirmedToInProgress` | ✅ |
-| `updateStatus_allowsValidTransition_inProgressToDone` | ✅ |
+| `createBooking_rejectsSlotAtOddMinuteMark` | PASS |
+| `createBooking_rejectsSlotBeforeOpeningHour` | PASS |
+| `createBooking_rejectsSlotAfterClosingHour` | PASS |
+| `createBooking_rejectsSlotWithLessThan30MinutesNotice` | PASS |
+| `createBooking_rejectsMemberBookingBeyond7DayWindow` | PASS |
+| `updateStatus_rejectsInvalidTransition_pendingToDone` | PASS |
+| `updateStatus_rejectsInvalidTransition_confirmedToDone` | PASS |
+| `updateStatus_rejectsAnyTransitionFromTerminalStatus` | PASS |
+| `updateStatus_allowsValidTransition_pendingToConfirmed` | PASS |
+| `updateStatus_allowsValidTransition_confirmedToInProgress` | PASS |
+| `updateStatus_allowsValidTransition_inProgressToDone` | PASS |
 
 ## Chi tiết SCRUM-47 — Point Usage & Refund (8/8)
 
 | Test | Kết quả |
 |------|---------|
-| `earnPoints_usesCustomPointsDirectlyWhenProvided` | ✅ |
-| `earnPoints_appliesTierMultiplierFromFallbackWhenNoTierRulesConfigured` | ✅ |
-| `earnPoints_appliesTierMultiplierFromTierRuleWhenConfigured` | ✅ |
-| `earnPoints_returnsZeroAndSkipsLogWhenAmountIsTooSmall` | ✅ |
-| `earnPoints_upgradesTierAndSendsNotificationWhenVisitsCrossThreshold` | ✅ |
-| `redeemPoints_throwsWhenCustomerHasInsufficientBalance` | ✅ |
-| `redeemPoints_deductsCorrectlyAndLogsRedemption` | ✅ |
-| `deductPointsFifo_consumesOldestExpiryRecordFirst` | ✅ |
+| `earnPoints_usesCustomPointsDirectlyWhenProvided` | PASS |
+| `earnPoints_appliesTierMultiplierFromFallbackWhenNoTierRulesConfigured` | PASS |
+| `earnPoints_appliesTierMultiplierFromTierRuleWhenConfigured` | PASS |
+| `earnPoints_returnsZeroAndSkipsLogWhenAmountIsTooSmall` | PASS |
+| `earnPoints_upgradesTierAndSendsNotificationWhenVisitsCrossThreshold` | PASS |
+| `redeemPoints_throwsWhenCustomerHasInsufficientBalance` | PASS |
+| `redeemPoints_deductsCorrectlyAndLogsRedemption` | PASS |
+| `deductPointsFifo_consumesOldestExpiryRecordFirst` | PASS |
 
 ## Chi tiết SCRUM-49 — Promotion Validation (8/8)
 
 | Test | Kết quả |
 |------|---------|
-| `createBooking_rejectsPromoWhenCustomerTierIsBelowMinimumRequired` | ✅ |
-| `createBooking_allowsPromoWhenCustomerTierMeetsMinimumRequired` | ✅ |
-| `createBooking_allowsPromoWhenTargetTiersIsEmptyMeaningOpenToAll` | ✅ |
-| `createBooking_rejectsPromoThatHasExpired` | ✅ |
-| `createBooking_rejectsPromoWhenUsageLimitIsReached` | ✅ |
-| `createBooking_rejectsPromoWhenCustomerHasAlreadyUsedIt` | ✅ |
-| `createBooking_capsPercentageDiscountAtMaxDiscount` | ✅ |
-| `createBooking_appliesFixedAmountDiscountWhenPromoValueExceeds100` | ✅ |
+| `createBooking_rejectsPromoWhenCustomerTierIsBelowMinimumRequired` | PASS |
+| `createBooking_allowsPromoWhenCustomerTierMeetsMinimumRequired` | PASS |
+| `createBooking_allowsPromoWhenTargetTiersIsEmptyMeaningOpenToAll` | PASS |
+| `createBooking_rejectsPromoThatHasExpired` | PASS |
+| `createBooking_rejectsPromoWhenUsageLimitIsReached` | PASS |
+| `createBooking_rejectsPromoWhenCustomerHasAlreadyUsedIt` | PASS |
+| `createBooking_capsPercentageDiscountAtMaxDiscount` | PASS |
+| `createBooking_appliesFixedAmountDiscountWhenPromoValueExceeds100` | PASS |
 
 ---
 
