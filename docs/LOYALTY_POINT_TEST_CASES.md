@@ -43,14 +43,14 @@ Trừ lần lượt từ record sắp hết hạn nhất → đảm bảo điể
 
 | # | Tên test | Mục tiêu | Kết quả |
 |---|----------|----------|---------|
-| 1 | `earnPoints_usesCustomPointsDirectlyWhenProvided` | `customPoints=15` → điểm = 15, không tính theo amountPaid | ✅ PASS |
-| 2 | `earnPoints_appliesTierMultiplierFromFallbackWhenNoTierRulesConfigured` | SILVER, TierRules rỗng → multiplier 1.10, 50k → 5 điểm | ✅ PASS |
-| 3 | `earnPoints_appliesTierMultiplierFromTierRuleWhenConfigured` | SILVER, TierRule multiplier=120 → 1.20 → 50k → 6 điểm | ✅ PASS |
-| 4 | `earnPoints_returnsZeroAndSkipsLogWhenAmountIsTooSmall` | 500 VND → 0 điểm → không lưu log, không gửi notification | ✅ PASS |
-| 5 | `earnPoints_upgradesTierAndSendsNotificationWhenVisitsCrossThreshold` | 9 visits + earn → 10 visits → MEMBER→SILVER, notification gửi | ✅ PASS |
-| 6 | `redeemPoints_throwsWhenCustomerHasInsufficientBalance` | 50 điểm, redeem 100 → `BusinessException` | ✅ PASS |
-| 7 | `redeemPoints_deductsCorrectlyAndLogsRedemption` | 200 điểm, redeem 80 → còn 120, log REDEEM points=-80 | ✅ PASS |
-| 8 | `deductPointsFifo_consumesOldestExpiryRecordFirst` | Record A (3 tháng) trước Record B (9 tháng) → A bị trừ hết trước | ✅ PASS |
+| 1 | `earnPoints_usesCustomPointsDirectlyWhenProvided` | `customPoints=15` → điểm = 15, không tính theo amountPaid | PASS |
+| 2 | `earnPoints_appliesTierMultiplierFromFallbackWhenNoTierRulesConfigured` | SILVER, TierRules rỗng → multiplier 1.10, 50k → 5 điểm | PASS |
+| 3 | `earnPoints_appliesTierMultiplierFromTierRuleWhenConfigured` | SILVER, TierRule multiplier=120 → 1.20 → 50k → 6 điểm | PASS |
+| 4 | `earnPoints_returnsZeroAndSkipsLogWhenAmountIsTooSmall` | 500 VND → 0 điểm → không lưu log, không gửi notification | PASS |
+| 5 | `earnPoints_upgradesTierAndSendsNotificationWhenVisitsCrossThreshold` | 9 visits + earn → 10 visits → MEMBER→SILVER, notification gửi | PASS |
+| 6 | `redeemPoints_throwsWhenCustomerHasInsufficientBalance` | 50 điểm, redeem 100 → `BusinessException` | PASS |
+| 7 | `redeemPoints_deductsCorrectlyAndLogsRedemption` | 200 điểm, redeem 80 → còn 120, log REDEEM points=-80 | PASS |
+| 8 | `deductPointsFifo_consumesOldestExpiryRecordFirst` | Record A (3 tháng) trước Record B (9 tháng) → A bị trừ hết trước | PASS |
 
 **Tổng: 8/8 PASS**
 
