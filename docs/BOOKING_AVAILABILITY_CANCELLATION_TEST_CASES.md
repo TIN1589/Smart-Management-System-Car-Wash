@@ -28,13 +28,13 @@ Trả về danh sách slot trong ngày (08:00–18:00, mỗi 30 phút). Mỗi sl
 
 | # | Tên test | Điều kiện | Kết quả kỳ vọng | Kết quả thực tế |
 |---|----------|-----------|-----------------|-----------------|
-| 1 | `getAvailability_returnsSlotAsUnavailableWhenAtFullCapacity` | Tất cả slot đếm được 2 booking | `available=false` trên mọi slot | ✅ PASS |
-| 2 | `getAvailability_marksSlotAsAvailableWhenCapacityHasRoom` | Không có booking, ngày mai (trong window MEMBER) | Có slot `available=true`, `remainingCapacity=2` | ✅ PASS |
-| 3 | `cancelBooking_refundsPointsAndTransitionsStatusToCancelled` | Booking PENDING, usedPoints=50 | status=CANCELLED, totalPoints+50, log REFUND lưu, notification gửi | ✅ PASS |
-| 4 | `cancelBooking_throwsWhenTryingToCancelACompletedBooking` | Booking status=DONE | `BusinessException` | ✅ PASS |
-| 5 | `cancelBooking_throwsWhenCustomerAttemptsToAccessAnotherCustomersBooking` | Booking thuộc customer khác | `BusinessException` | ✅ PASS |
-| 6 | `cancelBooking_allowsAdminToForceCancel_evenWhenInProgress` | Admin, booking IN_PROGRESS | status=CANCELLED | ✅ PASS |
-| 7 | `cancelBooking_isIdempotentWhenBookingIsAlreadyCancelled` | Booking đã CANCELLED | status=CANCELLED, không gọi `save`, không gọi `sendNotification` | ✅ PASS |
+| 1 | `getAvailability_returnsSlotAsUnavailableWhenAtFullCapacity` | Tất cả slot đếm được 2 booking | `available=false` trên mọi slot | PASS |
+| 2 | `getAvailability_marksSlotAsAvailableWhenCapacityHasRoom` | Không có booking, ngày mai (trong window MEMBER) | Có slot `available=true`, `remainingCapacity=2` | PASS |
+| 3 | `cancelBooking_refundsPointsAndTransitionsStatusToCancelled` | Booking PENDING, usedPoints=50 | status=CANCELLED, totalPoints+50, log REFUND lưu, notification gửi | PASS |
+| 4 | `cancelBooking_throwsWhenTryingToCancelACompletedBooking` | Booking status=DONE | `BusinessException` | PASS |
+| 5 | `cancelBooking_throwsWhenCustomerAttemptsToAccessAnotherCustomersBooking` | Booking thuộc customer khác | `BusinessException` | PASS |
+| 6 | `cancelBooking_allowsAdminToForceCancel_evenWhenInProgress` | Admin, booking IN_PROGRESS | status=CANCELLED | PASS |
+| 7 | `cancelBooking_isIdempotentWhenBookingIsAlreadyCancelled` | Booking đã CANCELLED | status=CANCELLED, không gọi `save`, không gọi `sendNotification` | PASS |
 
 **Tổng: 7/7 PASS**
 
